@@ -241,6 +241,26 @@ on a 7-gon is not that shape on a 9-gon, and one never shadows a feature the att
 already has. They live in browser storage, which is per-viewer and can fail outright in a
 private window, costing the kept shapes and nothing else.
 
+## Moving between figures
+
+Changing a spell or a base is animated, and the two cases differ. Changing the base moves
+the dots, so their positions are carried across; changing the spell leaves the dots where
+they are and changes the lines, so a line is drawn on from its first node and taken back
+the same way.
+
+Both fall out of geometry rather than CSS. The figure is rebuilt from the moving dots
+every frame, which is why the lines follow them instead of being animated separately —
+and it is also why `d` never has to be transitioned, which no browser does portably.
+
+Dots sweep round the centre rather than cutting straight across. Interpolating directly
+between, say, a ring and a quarter arc sends every dot through the middle at once, so the
+figure crumples to a knot halfway and opens out again; turning each the short way round
+and easing its distance keeps the figure spread the whole way. A swung dot can briefly
+reach wider than either end of the move, so the frame grows to hold it rather than
+cropping.
+
+`prefers-reduced-motion` skips all of it.
+
 ## Forging a scheme
 
 The notation never required five attributes, or D&D's. The **Forge** tab takes any set of

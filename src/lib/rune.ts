@@ -128,6 +128,35 @@ function bowTowards(
   return circumcentre(nodes[outside] ?? nodes[i], nodes[i], nodes[j]) ?? fallback
 }
 
+/**
+ * One chord between two nodes, optionally part-drawn.
+ *
+ * `grown` runs 0 to 1 and moves the far end along the chord, so a line can be
+ * drawn on or taken back without measuring anything in the DOM. The bow is
+ * aimed with the whole chord in mind, so a line growing in curves the way it
+ * will when it arrives rather than straightening out on the way.
+ */
+export function chordBetween(
+  nodes: readonly Point[],
+  closed: boolean,
+  from: number,
+  to: number,
+  curvature: number,
+  grown = 1,
+): string {
+  const centre = {
+    x: nodes.reduce((t, p) => t + p.x, 0) / nodes.length,
+    y: nodes.reduce((t, p) => t + p.y, 0) / nodes.length,
+  }
+  const start = nodes[from]
+  const finish = nodes[to]
+  const end = {
+    x: start.x + (finish.x - start.x) * grown,
+    y: start.y + (finish.y - start.y) * grown,
+  }
+  return chord(start, end, bowTowards(nodes, closed, from, to, centre), curvature).d
+}
+
 /** Where a chord of a finished figure should bow towards. */
 export function bowTarget(rune: Rune, closed: boolean, i: number, j: number): Point {
   return bowTowards(rune.nodes, closed, i, j, rune.centre)

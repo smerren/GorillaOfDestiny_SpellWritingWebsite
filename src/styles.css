@@ -917,3 +917,11 @@ button.link:hover {
   color: var(--text-soft);
   margin-bottom: 0.5rem;
 }
+
+/* The figure is animated by rebuilding its geometry each frame, so nothing
+   here should try to transition the paths as well. */
+@media (prefers-reduced-motion: reduce) {
+  .rune g {
+    transition: none !important;
+  }
+}

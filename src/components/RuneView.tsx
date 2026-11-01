@@ -2,7 +2,8 @@ import { useMemo } from 'react'
 
 import { chordOwner, type Figure } from '../lib/encoding'
 import { layerInk, SCAFFOLD_INK } from '../lib/palette'
-import { buildRune, viewBoxOf, type RuneStyle } from '../lib/rune'
+import type { RuneStyle } from '../lib/rune'
+import { useAnimatedRune } from './useAnimatedRune'
 
 interface Props {
   figure: Figure
@@ -31,11 +32,12 @@ export function RuneView({
   held = null,
   onHold,
 }: Props) {
-  const rune = useMemo(() => buildRune(figure, style, VIEW), [figure, style])
+  const rune = useAnimatedRune(figure, style, VIEW)
   const drawable = Boolean(onToggle && onHold)
 
   const stroke = rune.strokeWidth
   const node = rune.nodeRadius
+  const { x, y, size } = rune.viewBox
 
   /** Which nodes would make a line with the one being held. */
   const reachable = useMemo(() => {
@@ -64,9 +66,9 @@ export function RuneView({
   return (
     <svg
       className={drawable ? 'rune drawable' : 'rune'}
-      viewBox={viewBoxOf(rune)}
+      viewBox={`${x.toFixed(2)} ${y.toFixed(2)} ${size.toFixed(2)} ${size.toFixed(2)}`}
       role="img"
-      aria-label={`Rune of ${rune.layers.reduce((t, l) => t + l.chords.length, 0)} chords`}
+      aria-label={`Rune of ${figure.layers.reduce((t, l) => t + l.chords.length, 0)} lines`}
     >
       {style.showScaffold && (
         <g fill="none" stroke={SCAFFOLD_INK} strokeWidth={stroke / 6} opacity={0.4}>
@@ -76,8 +78,9 @@ export function RuneView({
         </g>
       )}
 
-      {rune.layers.map((layer) => {
+      {figure.layers.map((layer) => {
         const dimmed = focus !== null && focus !== layer.attribute.id
+        const mine = rune.chords.filter((c) => c.attributeId === layer.attribute.id)
         return (
           <g
             key={layer.attribute.id}
@@ -88,8 +91,8 @@ export function RuneView({
             opacity={dimmed ? 0.12 : 1}
             style={{ transition: 'opacity 140ms ease' }}
           >
-            {layer.paths.map((d, i) => (
-              <path key={i} d={d} />
+            {mine.map((c) => (
+              <path key={c.key} d={rune.pathOf(c)} />
             ))}
           </g>
         )
