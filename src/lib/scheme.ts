@@ -55,7 +55,12 @@ export function parseFeatures(text: string): string[] {
   return out
 }
 
-/** How many features a base of this size can carry, counting the blank. */
+/**
+ * How many features of your own a base of this size can carry.
+ *
+ * One of its symbols is always the blank, so this is one fewer than the number
+ * of cyclically unique numbers.
+ */
 export function capacityOf(sides: number): number {
   return uniqueCount(sides) - 1
 }
@@ -131,29 +136,34 @@ export function problems(draft: Draft): Problem[] {
       attributeId: null,
       message:
         `${draft.attributes.length} attributes need at least ` +
-        `${minimumSides(draft.attributes.length)} nodes. Past half of ${sides}, chord ` +
-        'lengths repeat by rotation and two attributes would share an edge.',
+        `${minimumSides(draft.attributes.length)} nodes. On ${sides}, two of them would ` +
+        'have to be drawn with the same lines, and the rune could not be read back.',
     })
   }
 
   draft.attributes.forEach((attribute, i) => {
     const features = parseFeatures(attribute.features)
     if (features.length === 0) {
-      out.push({ attributeId: attribute.id, message: 'No features yet, so nothing to write.' })
+      out.push({
+        attributeId: attribute.id,
+        message: 'No features yet, so this attribute draws nothing.',
+      })
     }
     // The blank at index 0 takes one of the available numbers.
     if (features.length + 1 > capacity) {
       out.push({
         attributeId: attribute.id,
         message:
-          `${features.length} features need ${features.length + 1} symbols, but ${sides} ` +
-          `nodes give only ${capacity}. Drop some, or add nodes.`,
+          `${sides} nodes hold ${capacityOf(sides)} features, and this has ` +
+          `${features.length}. Remove some, or give the scheme more nodes.`,
       })
     }
     if (i + 1 > halfway) {
       out.push({
         attributeId: attribute.id,
-        message: `k = ${i + 1} is more than half of ${sides}, so this layer is not unique.`,
+        message:
+          `This attribute is drawn with lines ${i + 1} steps long, more than half of ` +
+          `${sides}, so its symbols would repeat when the rune is turned round.`,
       })
     }
   })

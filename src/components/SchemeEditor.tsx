@@ -1,4 +1,4 @@
-import { minimumSides, uniqueCount } from '../lib/binary'
+import { uniqueCount } from '../lib/binary'
 import { layerInk } from '../lib/palette'
 import type { NamedSymbol } from '../lib/named'
 import type { Scheme } from '../lib/scheme'
@@ -47,9 +47,15 @@ export function SchemeEditor({ draft, scheme, onDraft, onForget, onReset }: Prop
     <section className="panel">
       <h2>The scheme</h2>
       <p className="hint">
-        The notation never required five attributes, or D&amp;D's. Any set works so long as each
-        has a finite list of features. Order is the symbol: moving an attribute or a feature
-        rewrites every rune written with it.
+        Nothing about this notation is particular to D&amp;D. Describe a spell with whatever
+        attributes you like — an attribute just needs a fixed list of features to choose
+        from, the way a 5e spell has exactly one school.
+      </p>
+      <p className="hint">
+        Each attribute is drawn with its own length of line, and each of its features with
+        its own shape. <strong>Which shape depends on where the feature sits in the
+        list</strong>, so reordering a list, or moving an attribute, changes what runes you
+        have already drawn would say.
       </p>
 
       <label className="field">
@@ -71,17 +77,18 @@ export function SchemeEditor({ draft, scheme, onDraft, onForget, onReset }: Prop
           }
         >
           <option value="auto">
-            Follow the attributes ({minimumSides(Math.max(1, draft.attributes.length))})
+            As many as needed ({sidesFor({ ...draft, sides: null })})
           </option>
           {Array.from({ length: MAX_SIDES - 2 }, (_, i) => i + 3).map((n) => (
             <option key={n} value={n}>
-              {n} nodes — {capacityOf(n)} features each
+              {n} nodes — room for {capacityOf(n)} features each
             </option>
           ))}
         </select>
         <small>
-          {sides} nodes give {uniqueCount(sides)} unique symbols, so {capacityOf(sides)} features
-          per attribute once the blank is counted.
+          {sides} nodes give {uniqueCount(sides)} shapes that cannot be mistaken for one
+          another when turned. One is the blank, leaving room for {capacityOf(sides)} features
+          in each attribute.
         </small>
       </label>
 
@@ -119,7 +126,7 @@ export function SchemeEditor({ draft, scheme, onDraft, onForget, onReset }: Prop
                 className="draft-features"
                 rows={Math.min(8, Math.max(3, count + 1))}
                 value={attribute.features}
-                placeholder="One feature per line"
+                placeholder="One feature per line, in the order you want them numbered"
                 aria-label={`Features of ${attribute.label || `attribute ${i + 1}`}`}
                 onChange={(e) => patch(attribute.id, { features: e.target.value })}
               />
@@ -152,8 +159,9 @@ export function SchemeEditor({ draft, scheme, onDraft, onForget, onReset }: Prop
 
               <div className="draft-foot">
                 <span>
-                  {count} feature{count === 1 ? '' : 's'} + blank
-                  {kept.length > 0 && ` + ${kept.length} drawn`}
+                  {count} feature{count === 1 ? '' : 's'}, plus the blank
+                  {kept.length > 0 &&
+                    ` and ${kept.length} you drew`}
                 </span>
                 <span className="draft-buttons">
                   <button type="button" onClick={() => move(i, -1)} disabled={i === 0}>

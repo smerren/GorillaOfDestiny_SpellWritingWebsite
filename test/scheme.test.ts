@@ -138,7 +138,7 @@ describe('warnings', () => {
     // 3 nodes carry 4 unique symbols, so only 3 features once the blank is counted.
     expect(capacityOf(3)).toBe(uniqueCount(3) - 1)
     const faults = problems(draft([['Element', many]], 3))
-    expect(faults.some((p) => /only/.test(p.message))).toBe(true)
+    expect(faults.some((p) => /Remove some/.test(p.message))).toBe(true)
   })
 
   it('catches a base too small for the attributes, where layers would collide', () => {
