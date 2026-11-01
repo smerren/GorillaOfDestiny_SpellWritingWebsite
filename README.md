@@ -102,6 +102,17 @@ src/data/spells.json    319 SRD spells, parsed from the 2024 dictionary
 symbol, so reordering one list silently rewrites every rune that uses it. The tests will
 catch it.
 
+## Views
+
+**Rune** is the figure on its own. **Spellbook plate** is the page the guide closes its
+qualitative section with: the whole rune above, and the five symbols it is built from
+below, each labelled with its attribute, its value and its `k`. Turn on *Tint each
+attribute* and a colour traces from the main figure straight down to the symbol it came
+from.
+
+Both views export as SVG or PNG. The plate carries its own parchment ground and credit
+line, so it stands alone as a page.
+
 ## A caster's own hand
 
 The rules fix *which* nodes are joined, never *how*. Both of those are adjustable:

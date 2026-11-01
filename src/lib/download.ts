@@ -9,17 +9,24 @@ export function downloadText(filename: string, text: string, type: string): void
   URL.revokeObjectURL(url)
 }
 
-/** Rasterise an SVG document to a PNG of the given pixel size. */
-export function downloadPng(filename: string, svg: string, size: number): void {
+/**
+ * Rasterise an SVG document to a PNG of the given pixel width.
+ *
+ * The height follows the drawing's own proportions — a spellbook plate is a
+ * portrait page, not a square, and forcing it into one would squash it.
+ */
+export function downloadPng(filename: string, svg: string, width: number): void {
   const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }))
   const image = new Image()
   image.onload = () => {
+    const ratio = image.naturalHeight / image.naturalWidth || 1
+    const height = Math.round(width * ratio)
     const canvas = document.createElement('canvas')
-    canvas.width = size
-    canvas.height = size
+    canvas.width = width
+    canvas.height = height
     const context = canvas.getContext('2d')
     if (context) {
-      context.drawImage(image, 0, 0, size, size)
+      context.drawImage(image, 0, 0, width, height)
       canvas.toBlob((blob) => {
         if (!blob) return
         const pngUrl = URL.createObjectURL(blob)

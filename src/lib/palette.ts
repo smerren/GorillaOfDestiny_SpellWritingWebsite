@@ -12,6 +12,11 @@ import type { AttributeId } from './keys'
 export const INK = '#8b0000'
 export const SCAFFOLD_INK = '#8a7a5c'
 
+/** Plates carry their own ground, so they export as a finished page. */
+export const PARCHMENT = '#ece0c4'
+export const GOLD = '#a98b46'
+export const TEXT_INK = '#3a2d1c'
+
 export const ATTRIBUTE_INK: Record<AttributeId, string> = {
   level: '#8b0000',
   school: '#1f4e5f',

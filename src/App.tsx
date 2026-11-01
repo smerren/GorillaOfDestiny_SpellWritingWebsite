@@ -1,14 +1,18 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import { AttributePanel } from './components/AttributePanel'
+import { PlateView } from './components/PlateView'
 import { RuneView } from './components/RuneView'
 import { SpellLibrary, type LibrarySpell } from './components/SpellLibrary'
 import { StylePanel } from './components/StylePanel'
 import { downloadPng, downloadText, slug } from './lib/download'
 import { encodeSpell } from './lib/encoding'
 import { DEFAULT_SIDES, EMPTY_SPELL, type AttributeId, type SpellAttributes } from './lib/keys'
-import { INK, SCAFFOLD_INK } from './lib/palette'
+import { ATTRIBUTE_INK, GOLD, INK, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from './lib/palette'
+import { buildPlate, plateToSvg } from './lib/plate'
 import { buildRune, runeToSvg, type RuneStyle } from './lib/rune'
+
+type View = 'rune' | 'plate'
 
 const DEFAULT_STYLE: RuneStyle = {
   base: 'polygon',
@@ -26,6 +30,7 @@ export function App() {
   const [connector, setConnector] = useState('straight')
   const [tintByAttribute, setTint] = useState(false)
   const [focus, setFocus] = useState<AttributeId | null>(null)
+  const [view, setView] = useState<View>('rune')
 
   const effectiveStyle = useMemo<RuneStyle>(
     () => ({ ...style, curvature: connector === 'straight' ? 0 : style.curvature }),
@@ -55,18 +60,26 @@ export function App() {
 
   const layers = useMemo(() => encodeSpell(spell, effectiveStyle.sides), [spell, effectiveStyle])
 
-  const svg = useMemo(
-    () =>
-      runeToSvg(buildRune(spell, effectiveStyle, 100), {
+  const title = name ?? 'Unnamed rune'
+
+  const svg = useMemo(() => {
+    if (view === 'plate') {
+      return plateToSvg(buildPlate(spell, effectiveStyle, title), {
         ink: INK,
         scaffoldInk: SCAFFOLD_INK,
-        showNodes: effectiveStyle.showNodes,
-        showStartNode: effectiveStyle.showStartNode,
-      }),
-    [spell, effectiveStyle],
-  )
-
-  const title = name ?? 'Unnamed rune'
+        parchment: PARCHMENT,
+        text: TEXT_INK,
+        gold: GOLD,
+        tint: tintByAttribute ? (a) => ATTRIBUTE_INK[a.id] : null,
+      })
+    }
+    return runeToSvg(buildRune(spell, effectiveStyle, 100), {
+      ink: INK,
+      scaffoldInk: SCAFFOLD_INK,
+      showNodes: effectiveStyle.showNodes,
+      showStartNode: effectiveStyle.showStartNode,
+    })
+  }, [view, spell, effectiveStyle, title, tintByAttribute])
 
   return (
     <div className="page">
@@ -81,13 +94,43 @@ export function App() {
 
       <main className="layout">
         <div className="stage">
+          <div className="view-switch" role="tablist" aria-label="View">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'rune'}
+              className={view === 'rune' ? 'on' : undefined}
+              onClick={() => setView('rune')}
+            >
+              Rune
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'plate'}
+              className={view === 'plate' ? 'on' : undefined}
+              onClick={() => setView('plate')}
+            >
+              Spellbook plate
+            </button>
+          </div>
+
           <figure className="plate">
-            <RuneView
-              spell={spell}
-              style={effectiveStyle}
-              tintByAttribute={tintByAttribute}
-              focus={focus}
-            />
+            {view === 'rune' ? (
+              <RuneView
+                spell={spell}
+                style={effectiveStyle}
+                tintByAttribute={tintByAttribute}
+                focus={focus}
+              />
+            ) : (
+              <PlateView
+                spell={spell}
+                style={effectiveStyle}
+                tintByAttribute={tintByAttribute}
+                title={title}
+              />
+            )}
             <figcaption>
               <input
                 className="title-input"
