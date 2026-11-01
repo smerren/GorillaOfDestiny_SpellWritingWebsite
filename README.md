@@ -11,7 +11,7 @@ you like.
 ```
 npm install
 npm run dev        # http://localhost:5173
-npm test           # 93 tests, including a check against all 319 published runes
+npm test           # 149 tests, including every published rune and both sets of keys
 npm run build
 ```
 
@@ -64,6 +64,28 @@ The feature's position in its list is its index into that binary list:
 
 Node `0` is the filled start node, one and a half steps clockwise of vertical, and the
 numbering runs clockwise.
+
+## Two sets of keys
+
+The Gorilla of Destiny published the keys twice, and they do not agree.
+
+|  | Guide, Section 4 (2022) | Dictionary (2024) |
+| --- | --- | --- |
+| Level | same | same |
+| School | same | same |
+| Damage | 16 types, including `damage`, `extra`, `nonmagical` | 14, led by `None` |
+| Area | `Single-Target/Sphere`, `Circle`, `Square`… | `Sphere (20)`, `Cube (10)`… |
+| Range | folds shape in: `15-feet cone`, `100-feet line` | plain distances, plus Self and Touch |
+
+So `fire` is `00000001011` in the guide but `00000000111` in the dictionary — and
+`00000000111` is what the guide calls plain `damage`. Everything from the fourth damage
+type on sits two places later in the guide, because the SRD has no word for `damage` or
+`extra`.
+
+Both are offered, under **Which keys**. The 2024 keys are the default because the 319
+published spells are written in that vocabulary and cannot be expressed in the other, so
+the 5e spellbook only appears with those keys selected. Spells and named shapes are held
+per scheme, so the two editions keep separate spellbooks.
 
 ## Is it faithful?
 

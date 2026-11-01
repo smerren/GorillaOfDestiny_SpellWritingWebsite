@@ -8,7 +8,13 @@
  */
 
 import { cyclicUniques, minimumSides, uniqueCount } from './binary'
-import { ATTRIBUTES, DEFAULT_SIDES, type Attribute, type SpellAttributes } from './keys'
+import {
+  ATTRIBUTES,
+  DEFAULT_SIDES,
+  GUIDE_ATTRIBUTES,
+  type Attribute,
+  type SpellAttributes,
+} from './keys'
 import { namedFor, type NamedLibrary } from './named'
 
 export interface Scheme {
@@ -41,6 +47,74 @@ export const FIVE_E: Scheme = {
   name: 'Dungeons & Dragons 5e',
   sides: DEFAULT_SIDES,
   attributes: ATTRIBUTES,
+}
+
+/** The keys printed in the guide itself, Section 4. */
+export const FIVE_E_GUIDE: Scheme = {
+  id: '5e-guide',
+  name: 'Dungeons & Dragons 5e',
+  sides: DEFAULT_SIDES,
+  attributes: GUIDE_ATTRIBUTES,
+}
+
+export type EditionId = '5e' | '5e-guide'
+
+/**
+ * The author published two sets of keys. They agree on level and school and
+ * differ on damage, area and range, so the same spell is drawn differently
+ * under each. Both are offered rather than one being called correct.
+ */
+export const EDITIONS: ReadonlyArray<{
+  readonly id: EditionId
+  readonly label: string
+  readonly note: string
+  readonly scheme: Scheme
+  /** Only the 2024 keys can express the published spell list. */
+  readonly hasSpellList: boolean
+}> = [
+  {
+    id: '5e',
+    label: 'Dictionary (2024)',
+    note:
+      'The keys of the Spell Writing Guide Dictionary, which takes its spell data from ' +
+      'the D&D 5e API. These are the keys the 319 published spells are drawn with.',
+    scheme: FIVE_E,
+    hasSpellList: true,
+  },
+  {
+    id: '5e-guide',
+    label: 'Guide (2022)',
+    note:
+      "The keys printed in the guide's own Section 4. Its damage list carries three " +
+      'entries the SRD has no word for, so fire and everything after it sit two places ' +
+      'later than in the 2024 keys, and its range list folds shape into distance.',
+    scheme: FIVE_E_GUIDE,
+    hasSpellList: false,
+  },
+]
+
+export const EDITION_BY_ID = Object.fromEntries(EDITIONS.map((e) => [e.id, e])) as Record<
+  EditionId,
+  (typeof EDITIONS)[number]
+>
+
+const EDITION_KEY = 'spell-writing:edition'
+
+export function loadEdition(): EditionId {
+  try {
+    const raw = localStorage.getItem(EDITION_KEY)
+    return raw === '5e-guide' || raw === '5e' ? raw : '5e'
+  } catch {
+    return '5e'
+  }
+}
+
+export function saveEdition(id: EditionId): void {
+  try {
+    localStorage.setItem(EDITION_KEY, id)
+  } catch {
+    // Nothing to do: the choice lasts for this session.
+  }
 }
 
 export function parseFeatures(text: string): string[] {

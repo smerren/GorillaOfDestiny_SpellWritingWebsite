@@ -143,6 +143,127 @@ export const ATTRIBUTES: readonly Attribute[] = [
   { id: 'range', label: 'Range', k: 5, features: RANGES, indexOffset: 0 },
 ]
 
+/**
+ * The keys of the guide itself — Section 4, "Symbolic Dictionary", 2022.
+ *
+ * These are transcribed from the plates on pages 14 to 17 and differ from the
+ * 2024 dictionary above for damage, area and range. The guide's damage list
+ * carries three entries the SRD has no word for — damage, extra and
+ * nonmagical — so everything from the fourth entry on sits two places later
+ * than it does in the 2024 list. Its range list folds shape into range
+ * ("15-feet cone"), which the 2024 one separates out.
+ *
+ * Level and school are the same in both.
+ *
+ * The guide prints no blank, numbering its features from the first symbol
+ * rather than from the empty one. A blank is prepended here so a layer can be
+ * left undrawn, which leaves every printed symbol on the number the plate
+ * gives it.
+ */
+
+/** The undrawn layer. The guide's own lists have no such entry. */
+const NOTHING = '—'
+
+const GUIDE_SCHOOLS = [
+  NOTHING,
+  'Abjuration',
+  'Conjuration',
+  'Divination',
+  'Enchantment',
+  'Evocation',
+  'Illusion',
+  'Necromancy',
+  'Transmutation',
+]
+
+const GUIDE_DAMAGE_TYPES = [
+  NOTHING,
+  'acid',
+  'bludgeoning',
+  'cold',
+  'damage',
+  'extra',
+  'fire',
+  'force',
+  'lightning',
+  'necrotic',
+  'nonmagical',
+  'piercing',
+  'poison',
+  'psychic',
+  'radiant',
+  'slashing',
+  'thunder',
+]
+
+/**
+ * Not alphabetical. The plate lays its symbols out alphabetically but numbers
+ * them in another order entirely, which is the order of the author's own
+ * source data; this is that order, read off the binaries beside each symbol.
+ * Note that "None" here is a drawn symbol near the end of the list, not the
+ * blank.
+ */
+const GUIDE_AREA_TYPES = [
+  NOTHING,
+  'Cube',
+  'Line',
+  'Multiple-Targets',
+  'Multiple-Targets/Sphere',
+  'Cone',
+  'Cone/Sphere',
+  'Square',
+  'Circle',
+  'Sphere',
+  'Sphere/Cylinder',
+  'Single-Target',
+  'Single-Target/Cube',
+  'Single-Target/Multiple-Targets',
+  'Single-Target/Cone',
+  'Single-Target/Sphere',
+  'Single-Target/Wall',
+  'Wall',
+  'Cylinder',
+  'None',
+]
+
+const GUIDE_RANGES = [
+  NOTHING,
+  '10-feet radius',
+  '100-feet line',
+  '15-feet cone',
+  '15-feet cube',
+  '15-feet radius',
+  '30-feet cone',
+  '30-feet line',
+  '30-feet radius',
+  '5-feet radius',
+  '60-feet cone',
+  '60-feet line',
+  'Point (1 miles)',
+  'Point (10 feet)',
+  'Point (1000 feet)',
+  'Point (120 feet)',
+  'Point (150 feet)',
+  'Point (30 feet)',
+  'Point (300 feet)',
+  'Point (5 feet)',
+  'Point (500 feet)',
+  'Point (60 feet)',
+  'Point (90 feet)',
+  'Self',
+  'Sight',
+  'Special',
+  'Touch',
+]
+
+export const GUIDE_ATTRIBUTES: readonly Attribute[] = [
+  { id: 'level', label: 'Level', k: 1, features: LEVELS, indexOffset: 1 },
+  { id: 'school', label: 'School', k: 2, features: GUIDE_SCHOOLS, indexOffset: 0 },
+  { id: 'damage', label: 'Damage Type', k: 3, features: GUIDE_DAMAGE_TYPES, indexOffset: 0 },
+  { id: 'area', label: 'Areas', k: 4, features: GUIDE_AREA_TYPES, indexOffset: 0 },
+  { id: 'range', label: 'Range', k: 5, features: GUIDE_RANGES, indexOffset: 0 },
+]
+
 export const ATTRIBUTE_BY_ID = Object.fromEntries(
   ATTRIBUTES.map((a) => [a.id, a]),
 ) as Record<FiveEAttributeId, Attribute>

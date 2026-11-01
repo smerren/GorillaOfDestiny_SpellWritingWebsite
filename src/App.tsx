@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import { EditionPanel } from './components/EditionPanel'
 import { SchemeEditor } from './components/SchemeEditor'
 import { SpellLibrary, type LibrarySpell } from './components/SpellLibrary'
 import { SpellbookPanel } from './components/SpellbookPanel'
@@ -29,12 +30,16 @@ import {
 } from './lib/spellbook'
 import {
   compile,
+  EDITION_BY_ID,
   FIVE_E,
   loadDraft,
+  loadEdition,
+  saveEdition,
   saveDraft,
   STARTER,
   withKept,
   type Draft,
+  type EditionId,
 } from './lib/scheme'
 
 type Tab = 'scribe' | 'forge'
@@ -85,7 +90,15 @@ function dictionaryBits(spell: LibrarySpell): Bits {
 function Scribe() {
   const { named, onRemember, onForget } = useNamedSymbols()
   const { book, onKeep, onDrop, onRename } = useSpellbook()
-  const scheme = useMemo(() => withKept(FIVE_E, named), [named])
+
+  const [edition, setEditionState] = useState<EditionId>(() => loadEdition())
+  const chosen = EDITION_BY_ID[edition]
+  const scheme = useMemo(() => withKept(chosen.scheme, named), [chosen, named])
+
+  const setEdition = useCallback((id: EditionId) => {
+    setEditionState(id)
+    saveEdition(id)
+  }, [])
 
   const [bits, setBits] = useState<Bits>(() =>
     bitsOf(figureFromSpell(EMPTY_SPELL, FIVE_E.sides, FIVE_E.attributes)),
@@ -168,12 +181,15 @@ function Scribe() {
         onRename={onRename}
         onDrop={onDrop}
       />
-      <SpellLibrary
-        current={name}
-        favourites={favourites}
-        onPick={pick}
-        onFavourite={favourite}
-      />
+      <EditionPanel edition={edition} onEdition={setEdition} />
+      {chosen.hasSpellList && (
+        <SpellLibrary
+          current={name}
+          favourites={favourites}
+          onPick={pick}
+          onFavourite={favourite}
+        />
+      )}
     </Workbench>
   )
 }
