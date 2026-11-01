@@ -296,6 +296,10 @@ export function App() {
           (@GorillaOfDestiny). This site is not endorsed by or authored by them.
         </p>
         <p>
+          This site was built with AI, so that writing a rune does not depend on knowing the
+          maths underneath it.
+        </p>
+        <p>
           Spell attributes are taken from the System Reference Document 5.1 by Wizards of the
           Coast LLC, used under the{' '}
           <a href="https://creativecommons.org/licenses/by/4.0/legalcode">

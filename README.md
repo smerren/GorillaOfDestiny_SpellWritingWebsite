@@ -1,15 +1,37 @@
 # Spell Writing
 
 A scribing table for the spell notation set out in **The Spell Writing Guide** by
-[The Gorilla of Destiny](https://www.tiktok.com/@gorillaofdestiny). Pick what a spell *is* —
-its level, school, damage type, area and range — and read back the rune it is written as.
+[The Gorilla of Destiny](https://www.tiktok.com/@gorillaofdestiny).
+
+Say what a spell *is* — its level, school, damage type, area and range — and read back the
+rune it is written as. Or join the dots yourself and read back what you wrote. Keep what
+you make in your own spellbook, or invent a notation of your own with whatever attributes
+you like.
 
 ```
 npm install
 npm run dev        # http://localhost:5173
-npm test           # 19 tests, including a check against all 319 published runes
+npm test           # 93 tests, including a check against all 319 published runes
 npm run build
 ```
+
+Everything runs in the browser. There is no server, no account and no database: the build
+is three static files, and your spellbook lives in your own browser storage.
+
+## Made with AI
+
+**This site was built with AI.** The code here was written by Claude, working from the
+guide, with me directing it.
+
+> I used AI mainly because I'm lazy, however I think this is a good usage of it, since it
+> makes this type of art easily accessible, without the knowledge of the maths involved.
+
+Which is the thing worth saying about it: the notation rests on cyclically unique binary
+numbers and a bit of graph theory, and none of that should be the price of writing a
+pretty rune for your character. The maths is in here so you do not have to do it.
+
+None of the system is mine. It is the Gorilla of Destiny's, and the credits are at the
+bottom.
 
 ## How the notation works
 
@@ -90,11 +112,15 @@ catch a regression here, because the fixture is generated from the same headings
 
 ```
 src/lib/binary.ts       cyclically unique binary numbers
-src/lib/keys.ts         the five attributes and their feature lists
-src/lib/encoding.ts     feature -> bits -> chords, and back again
-src/lib/bases.ts        where the nodes sit (Section 2.3.3)
-src/lib/connectors.ts   how nodes are joined (Sections 2.3.1-2.3.2)
+src/lib/keys.ts         the five 5e attributes and their feature lists
+src/lib/encoding.ts     feature <-> bits <-> chords, and figures made of them
+src/lib/bases.ts        where the dots sit (Section 2.3.3)
+src/lib/connectors.ts   how dots are joined, and how far a line reaches
 src/lib/rune.ts         assembling a figure, and writing it out as SVG
+src/lib/plate.ts        the spellbook page: a rune beside its parts
+src/lib/scheme.ts       attribute sets, including ones you invent
+src/lib/named.ts        shapes you drew, named and kept
+src/lib/spellbook.ts    spells you wrote or copied
 src/data/spells.json    319 SRD spells, parsed from the 2024 dictionary
 ```
 
@@ -207,12 +233,18 @@ Every scheme reserves index 0 for a blank that draws nothing, exactly as the pub
 keys do with `None` and `Blank`. Drafts are kept in browser storage, which is per-viewer
 and can fail outright in a private window — losing a draft and nothing else.
 
-## Not yet done
+## To do
 
-Letting people define their own attributes, feature lists and bases — the system is
-general enough for any set of attributes with discrete features, and `binary.ts` and
-`bases.ts` are already written against an arbitrary `n`. The UI is what assumes the 5e
-five.
+- **Let people define their own bases.** The five on offer — ring, dome, quarter circle,
+  valley, wave — are hard-coded in `bases.ts`. The guide treats the base as free: any set
+  of points that can be told apart and joined in order will do, which is the whole of
+  Section 2.3.3. A base is only a function from a dot count to a list of points plus a
+  flag for whether it closes, so the shape of the thing is already right; what is missing
+  is a way to describe one without editing the file. Dragging dots around, or typing a
+  formula, would both fit.
+
+Attributes and feature lists of your own are done — that is the Forge tab — and
+`binary.ts` and `bases.ts` were written against an arbitrary dot count from the start.
 
 ## Credits and licensing
 
