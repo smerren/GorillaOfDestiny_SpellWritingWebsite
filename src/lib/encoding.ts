@@ -37,8 +37,6 @@ export function labelOf(layer: Layer): string | null {
   return layer.feature ?? layer.named
 }
 
-/** Looks up a name for an attribute's bits. */
-export type NameResolver = (attributeId: string, bits: string) => string | null
 
 /** A whole figure: what is drawn, on how many nodes, under which attributes. */
 export interface Figure {
@@ -54,7 +52,6 @@ export function figureFromBits(
   bits: Bits,
   sides: number,
   attributes: readonly Attribute[] = ATTRIBUTES,
-  named?: NameResolver,
 ): Figure {
   const layers = attributes.map((attribute) => {
     const written = bits[attribute.id] ?? '0'.repeat(sides)
@@ -63,7 +60,7 @@ export function figureFromBits(
     return {
       attribute,
       feature,
-      named: feature === null ? (named?.(attribute.id, padded) ?? null) : null,
+      named: feature === null ? keptNameOf(attribute, padded) : null,
       bits: padded,
       chords: chordsFor(attribute, padded, sides),
     }
@@ -121,10 +118,18 @@ export function emptyBits(sides: number, attributes: readonly Attribute[]): Bits
 
 /** The binary number a single feature is written with, or all-zeroes if unknown. */
 export function bitsFor(attribute: Attribute, feature: string, sides: number): string {
-  const position = attribute.features.indexOf(feature)
   const uniques = cyclicUniques(sides)
+  const kept = attribute.kept?.find((k) => k.name === feature)
+  // A kept shape was drawn before it was named, so it keeps its own bits.
+  if (kept) return kept.bits.length === sides ? kept.bits : uniques[0]
+  const position = attribute.features.indexOf(feature)
   if (position < 0) return uniques[0]
   return uniques[position + attribute.indexOffset] ?? uniques[0]
+}
+
+/** The name the author gave this shape, if they kept it. */
+export function keptNameOf(attribute: Attribute, bits: string): string | null {
+  return attribute.kept?.find((k) => k.bits === bits)?.name ?? null
 }
 
 /** The chords one attribute contributes. */

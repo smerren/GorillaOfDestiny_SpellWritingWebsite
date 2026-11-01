@@ -2,14 +2,13 @@ import { useState } from 'react'
 
 import { bitsFor, type Figure } from '../lib/encoding'
 import type { AttributeId } from '../lib/keys'
-import { namedFor, type NamedLibrary, type NamedSymbol } from '../lib/named'
+import type { NamedSymbol } from '../lib/named'
 import { layerInk } from '../lib/palette'
 
 interface Props {
   figure: Figure
   /** Which scheme these symbols belong to, so names do not cross over. */
   schemeId: string
-  named: NamedLibrary
   tintByAttribute: boolean
   ink: string
   /** Set a layer's bits outright: every option resolves to a shape. */
@@ -22,7 +21,6 @@ interface Props {
 export function AttributePanel({
   figure,
   schemeId,
-  named,
   tintByAttribute,
   ink,
   onChoose,
@@ -48,7 +46,7 @@ export function AttributePanel({
 
       <div className="attributes">
         {figure.layers.map(({ attribute, feature, named: givenName, bits }) => {
-          const mine = namedFor(named, schemeId, attribute.id, figure.sides)
+          const mine = attribute.kept ?? []
           const unnamed = feature === null && givenName === null
           const isNaming = naming === attribute.id
 
@@ -80,7 +78,7 @@ export function AttributePanel({
                   </option>
                 ))}
                 {mine.length > 0 && (
-                  <optgroup label="Named by you">
+                  <optgroup label="Kept by you">
                     {mine.map((entry) => (
                       <option key={entry.bits} value={entry.bits}>
                         {entry.name}

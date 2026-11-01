@@ -7,7 +7,7 @@ import { StylePanel } from './StylePanel'
 import { downloadPng, downloadText, slug } from '../lib/download'
 import { emptyBits, figureFromBits, labelOf, toggleChord, type Bits } from '../lib/encoding'
 import type { AttributeId } from '../lib/keys'
-import { resolver, type NamedLibrary, type NamedSymbol } from '../lib/named'
+import type { NamedSymbol } from '../lib/named'
 import { GOLD, layerInk, INK, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../lib/palette'
 import { buildPlate, plateToSvg } from '../lib/plate'
 import { buildRune, runeToSvg, type RuneStyle } from '../lib/rune'
@@ -21,8 +21,7 @@ interface Props {
    */
   bits: Bits
   onBits: (next: Bits) => void
-  /** Symbols the author has named, and the ways to add to them. */
-  named: NamedLibrary
+  /** Naming a drawn shape adds it to the scheme. */
   onRemember: (entry: NamedSymbol) => void
   onForget: (entry: NamedSymbol) => void
   title: string | null
@@ -37,7 +36,6 @@ export function Workbench({
   scheme,
   bits,
   onBits,
-  named,
   onRemember,
   onForget,
   title,
@@ -83,14 +81,8 @@ export function Workbench({
   }, [])
 
   const figure = useMemo(
-    () =>
-      figureFromBits(
-        bits,
-        scheme.sides,
-        scheme.attributes,
-        resolver(named, scheme.id, scheme.sides),
-      ),
-    [bits, scheme, named],
+    () => figureFromBits(bits, scheme.sides, scheme.attributes),
+    [bits, scheme],
   )
 
   const choose = useCallback(
@@ -267,7 +259,6 @@ export function Workbench({
         <AttributePanel
           figure={figure}
           schemeId={scheme.id}
-          named={named}
           tintByAttribute={tintByAttribute}
           ink={ink}
           onChoose={choose}

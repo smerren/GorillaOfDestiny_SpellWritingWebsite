@@ -1,5 +1,7 @@
 import { minimumSides, uniqueCount } from '../lib/binary'
 import { layerInk } from '../lib/palette'
+import type { NamedSymbol } from '../lib/named'
+import type { Scheme } from '../lib/scheme'
 import {
   capacityOf,
   newAttributeId,
@@ -12,13 +14,16 @@ import {
 
 interface Props {
   draft: Draft
+  /** The compiled scheme, which carries the shapes kept against it. */
+  scheme: Scheme
   onDraft: (next: Draft) => void
+  onForget: (entry: NamedSymbol) => void
   onReset: () => void
 }
 
 const MAX_SIDES = 13
 
-export function SchemeEditor({ draft, onDraft, onReset }: Props) {
+export function SchemeEditor({ draft, scheme, onDraft, onForget, onReset }: Props) {
   const sides = sidesFor(draft)
   const faults = problems(draft)
   const faultFor = (id: string) => faults.filter((p) => p.attributeId === id)
@@ -90,6 +95,7 @@ export function SchemeEditor({ draft, onDraft, onReset }: Props) {
         {draft.attributes.map((attribute, i) => {
           const count = parseFeatures(attribute.features).length
           const mine = faultFor(attribute.id)
+          const kept = scheme.attributes.find((a) => a.id === attribute.id)?.kept ?? []
           return (
             <div key={attribute.id} className="draft-attribute">
               <div className="attribute-head">
@@ -118,9 +124,36 @@ export function SchemeEditor({ draft, onDraft, onReset }: Props) {
                 onChange={(e) => patch(attribute.id, { features: e.target.value })}
               />
 
+              {kept.length > 0 && (
+                <ul className="kept-list">
+                  {kept.map((shape) => (
+                    <li key={shape.bits}>
+                      <span className="kept-name">{shape.name}</span>
+                      <code>{shape.bits}</code>
+                      <button
+                        type="button"
+                        className="link"
+                        onClick={() =>
+                          onForget({
+                            scheme: scheme.id,
+                            attribute: attribute.id,
+                            sides: scheme.sides,
+                            bits: shape.bits,
+                            name: shape.name,
+                          })
+                        }
+                      >
+                        forget
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
               <div className="draft-foot">
                 <span>
                   {count} feature{count === 1 ? '' : 's'} + blank
+                  {kept.length > 0 && ` + ${kept.length} drawn`}
                 </span>
                 <span className="draft-buttons">
                   <button type="button" onClick={() => move(i, -1)} disabled={i === 0}>

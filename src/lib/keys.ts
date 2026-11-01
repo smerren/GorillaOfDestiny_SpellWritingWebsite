@@ -16,12 +16,27 @@ export type AttributeId = string
 
 export type FiveEAttributeId = 'level' | 'school' | 'damage' | 'area' | 'range'
 
+/**
+ * A feature the author added by naming a shape they drew.
+ *
+ * It carries its own bits rather than taking them from its position, because
+ * the shape came first and the name second. That is the whole difference
+ * between these and the listed features.
+ */
+export interface KeptFeature {
+  readonly name: string
+  readonly bits: string
+}
+
 export interface Attribute {
   readonly id: AttributeId
   readonly label: string
   /** Which chord length this attribute is drawn with. */
   readonly k: number
+  /** The published list, whose order is the symbol. */
   readonly features: readonly string[]
+  /** Shapes the author drew, named, and kept. Order means nothing here. */
+  readonly kept?: readonly KeptFeature[]
   /**
    * Levels are the one list with no blank entry, so level 0 takes index 1.
    * Every other attribute maps position straight onto the binary list.

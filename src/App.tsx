@@ -19,6 +19,7 @@ import {
   loadDraft,
   saveDraft,
   STARTER,
+  withKept,
   type Draft,
 } from './lib/scheme'
 
@@ -44,6 +45,7 @@ function useNamedSymbols() {
 /** The 5e dictionary: a fixed scheme with a spellbook to draw from. */
 function Scribe() {
   const { named, onRemember, onForget } = useNamedSymbols()
+  const scheme = useMemo(() => withKept(FIVE_E, named), [named])
   const [bits, setBits] = useState<Bits>(() =>
     bitsOf(figureFromSpell(EMPTY_SPELL, FIVE_E.sides, FIVE_E.attributes)),
   )
@@ -63,10 +65,9 @@ function Scribe() {
 
   return (
     <Workbench
-      scheme={FIVE_E}
+      scheme={scheme}
       bits={bits}
       onBits={change}
-      named={named}
       onRemember={onRemember}
       onForget={onForget}
       title={name}
@@ -88,7 +89,7 @@ function Forge() {
     saveDraft(draft)
   }, [draft])
 
-  const scheme = useMemo(() => compile(draft), [draft])
+  const scheme = useMemo(() => withKept(compile(draft), named), [draft, named])
 
   // Attributes come and go while a scheme is being written, and the node count
   // moves with them, so anything that no longer fits falls back to blank
@@ -107,13 +108,18 @@ function Forge() {
       scheme={scheme}
       bits={bits}
       onBits={setDrawn}
-      named={named}
       onRemember={onRemember}
       onForget={onForget}
       title={name}
       onTitle={setName}
     >
-      <SchemeEditor draft={draft} onDraft={setDraft} onReset={() => setDraft(STARTER)} />
+      <SchemeEditor
+        draft={draft}
+        scheme={scheme}
+        onDraft={setDraft}
+        onForget={onForget}
+        onReset={() => setDraft(STARTER)}
+      />
     </Workbench>
   )
 }

@@ -5,10 +5,14 @@
  * outside its attribute's list — legible notation with no word for it. Naming
  * one keeps it, so it can be chosen again from the dropdown like any feature.
  *
- * A name is an overlay keyed by the bits, never an extra entry in the
- * attribute's feature list. Position in that list *is* the symbol, so appending
- * to it would hand the new name somebody else's shape and quietly rewrite every
- * rune after it.
+ * This module is the store. `withKept` in scheme.ts folds what is here into
+ * the scheme the shapes were named under, where they become features of their
+ * attribute like any other.
+ *
+ * What they never become is an entry in the attribute's published list.
+ * Position in that list *is* the symbol, so appending to it would hand the new
+ * name somebody else's shape and quietly rewrite every rune after it. A kept
+ * shape carries its own bits instead, because the shape came first.
  */
 
 export interface NamedSymbol {
@@ -49,11 +53,6 @@ export function namedFor(
   sides: number,
 ): NamedSymbol[] {
   return library.filter((e) => matches(e, scheme, attribute, sides))
-}
-
-/** A resolver shaped for figureFromBits. */
-export function resolver(library: NamedLibrary, scheme: string, sides: number) {
-  return (attribute: string, bits: string) => nameOf(library, scheme, attribute, sides, bits)
 }
 
 export function remember(library: NamedLibrary, entry: NamedSymbol): NamedSymbol[] {

@@ -9,6 +9,7 @@
 
 import { cyclicUniques, minimumSides, uniqueCount } from './binary'
 import { ATTRIBUTES, DEFAULT_SIDES, type Attribute, type SpellAttributes } from './keys'
+import { namedFor, type NamedLibrary } from './named'
 
 export interface Scheme {
   readonly id: string
@@ -222,5 +223,26 @@ export function saveDraft(draft: Draft): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(draft))
   } catch {
     // Nothing to do: the draft stays in memory for this session.
+  }
+}
+
+/**
+ * Fold the shapes the author has named into the scheme they were named under.
+ *
+ * A kept shape is a feature of its attribute like any other — it shows in the
+ * dropdown, reads back by name, and prints on a plate. What it does not do is
+ * take a place in the published list, because a feature's place in that list
+ * is its symbol, and this one already has one.
+ */
+export function withKept(scheme: Scheme, library: NamedLibrary): Scheme {
+  return {
+    ...scheme,
+    attributes: scheme.attributes.map((attribute) => {
+      const kept = namedFor(library, scheme.id, attribute.id, scheme.sides).map((entry) => ({
+        name: entry.name,
+        bits: entry.bits,
+      }))
+      return kept.length > 0 ? { ...attribute, kept } : attribute
+    }),
   }
 }

@@ -152,18 +152,28 @@ layer reads as *drawn by hand* rather than being snapped to the nearest word or 
 
 ### Naming what you drew
 
-An unnamed symbol can be given a name and kept. It then appears in that attribute's
-dropdown under *Named by you*, and is read back by name wherever it is drawn again.
+Name an unnamed symbol and it joins the scheme as a feature of its attribute: it appears
+in that attribute's dropdown under *Kept by you*, reads back by name wherever it is drawn
+again, prints on a plate, and is listed under its attribute in the Forge, where it can be
+forgotten again.
 
-**A name is an overlay keyed by the bits, never an extra entry in the attribute's feature
-list.** Position in that list *is* the symbol, so appending to it would hand the new name
-somebody else's shape and silently rewrite every rune after it — which is the same trap
-as reordering a list, and the tests guard it.
+What it does **not** join is the attribute's published list:
 
-Names are held per attribute, per scheme and per node count, because a shape drawn on a
-7-gon is not the same shape on a 9-gon. A name never shadows a feature the attribute
+```ts
+features: readonly string[]            // order is the symbol
+kept?:    readonly KeptFeature[]       // each carries its own bits
+```
+
+Position in `features` *is* the symbol, so appending to it would hand the new name
+somebody else's shape and silently rewrite every rune after it — the same trap as
+reordering a list. A kept shape carries the bits it was drawn with, because the shape
+came first and the name second. Order means nothing among them. Tests hold the published
+lists still across a naming to make sure of it.
+
+Kept shapes are held per attribute, per scheme and per node count, because a shape drawn
+on a 7-gon is not that shape on a 9-gon, and one never shadows a feature the attribute
 already has. They live in browser storage, which is per-viewer and can fail outright in a
-private window, costing the saved names and nothing else.
+private window, costing the kept shapes and nothing else.
 
 ## Forging a scheme
 

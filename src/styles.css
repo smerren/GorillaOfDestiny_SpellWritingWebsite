@@ -785,3 +785,32 @@ button.link:hover {
   font-weight: 500;
   font-style: italic;
 }
+
+/* ---------- shapes kept against a scheme ---------- */
+
+.kept-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0 0;
+  display: grid;
+  gap: 0.2rem;
+  border-top: 1px dashed var(--rule);
+}
+
+.kept-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+}
+
+.kept-name {
+  font-style: italic;
+  color: #4a2a18;
+}
+
+.kept-list code {
+  color: var(--text-soft);
+  font-size: 0.68rem;
+  margin-left: auto;
+}
