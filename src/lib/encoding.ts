@@ -18,9 +18,92 @@ export interface Chord {
 
 export interface Layer {
   readonly attribute: Attribute
-  readonly feature: string
+  /**
+   * The feature this layer spells, or null when it spells none.
+   *
+   * Drawing by hand can land on a number that is cyclically unique but outside
+   * the attribute's list — a legible symbol with nothing to say. The notation
+   * allows it, so the model does too.
+   */
+  readonly feature: string | null
   readonly bits: string
   readonly chords: readonly Chord[]
+}
+
+/** A whole figure: what is drawn, on how many nodes, under which attributes. */
+export interface Figure {
+  readonly sides: number
+  readonly attributes: readonly Attribute[]
+  readonly layers: readonly Layer[]
+}
+
+/** Which bits each attribute is currently drawn with. */
+export type Bits = Record<string, string>
+
+export function figureFromBits(
+  bits: Bits,
+  sides: number,
+  attributes: readonly Attribute[] = ATTRIBUTES,
+): Figure {
+  const layers = attributes.map((attribute) => {
+    const written = bits[attribute.id] ?? '0'.repeat(sides)
+    const padded = written.length === sides ? written : '0'.repeat(sides)
+    return {
+      attribute,
+      feature: decodeBits(attribute, padded, sides),
+      bits: padded,
+      chords: chordsFor(attribute, padded, sides),
+    }
+  })
+  return { sides, attributes, layers }
+}
+
+export function figureFromSpell(
+  spell: SpellAttributes,
+  sides: number,
+  attributes: readonly Attribute[] = ATTRIBUTES,
+): Figure {
+  return { sides, attributes, layers: encodeSpell(spell, sides, attributes) }
+}
+
+export function bitsOf(figure: Figure): Bits {
+  return Object.fromEntries(figure.layers.map((l) => [l.attribute.id, l.bits]))
+}
+
+/**
+ * Which attribute owns the chord between two nodes, and which end it starts
+ * from. Null when no attribute is drawn with chords of that length.
+ */
+export function chordOwner(
+  attributes: readonly Attribute[],
+  sides: number,
+  a: number,
+  b: number,
+): { attribute: Attribute; from: number } | null {
+  if (a === b) return null
+  const step = (b - a + sides) % sides
+  const k = Math.min(step, sides - step)
+  const attribute = attributes.find((x) => x.k === k)
+  if (!attribute) return null
+  return { attribute, from: (a + k) % sides === b ? a : b }
+}
+
+/** Turn one chord on or off, leaving every other layer alone. */
+export function toggleChord(figure: Figure, a: number, b: number): Bits | null {
+  const owner = chordOwner(figure.attributes, figure.sides, a, b)
+  if (!owner) return null
+  const bits = bitsOf(figure)
+  const current = bits[owner.attribute.id]
+  const flipped =
+    current.slice(0, owner.from) +
+    (current[owner.from] === '1' ? '0' : '1') +
+    current.slice(owner.from + 1)
+  return { ...bits, [owner.attribute.id]: flipped }
+}
+
+/** Every layer blank, which draws nothing. */
+export function emptyBits(sides: number, attributes: readonly Attribute[]): Bits {
+  return Object.fromEntries(attributes.map((a) => [a.id, '0'.repeat(sides)]))
 }
 
 /** The binary number a single feature is written with, or all-zeroes if unknown. */

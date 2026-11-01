@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { layerInk, SCAFFOLD_INK } from '../lib/palette'
-import { buildRune, type RuneStyle } from '../lib/rune'
+import { buildRune, viewBoxOf, type RuneStyle } from '../lib/rune'
 import type { Attribute, SpellAttributes } from '../lib/keys'
 
 interface Props {
@@ -23,13 +23,13 @@ export function RuneView({ spell, style, attributes, tintByAttribute, ink, focus
     [spell, style, attributes],
   )
 
-  const stroke = VIEW / 70
-  const node = VIEW / 110
+  const stroke = rune.strokeWidth
+  const node = rune.nodeRadius
 
   return (
     <svg
       className="rune"
-      viewBox={`0 0 ${VIEW} ${VIEW}`}
+      viewBox={viewBoxOf(rune)}
       role="img"
       aria-label={`Rune made of ${rune.layers.reduce((t, l) => t + l.chords.length, 0)} chords`}
     >

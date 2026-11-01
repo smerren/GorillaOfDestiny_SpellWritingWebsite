@@ -13,7 +13,7 @@
 import type { Point } from './bases'
 import { encodeSpell } from './encoding'
 import { ATTRIBUTES, type Attribute, type SpellAttributes } from './keys'
-import { buildRune, type Rune, type RuneStyle } from './rune'
+import { buildRune, fitTransform, type Rune, type RuneStyle } from './rune'
 
 export interface PlateCell {
   readonly attribute: Attribute
@@ -58,31 +58,61 @@ export interface Plate {
 }
 
 const WIDTH = 720
-const HEIGHT = 816
+const MARGIN = 32
 const MAIN_SIZE = 430
-const CELL_SIZE = 118
+const MAIN_TOP = 82
+const MAX_CELL = 118
+/** Below this a broken-out symbol stops being readable, so wrap instead. */
+const MIN_CELL = 74
 const CELL_GAP = 14
+/** Room above a symbol for its attribute name, and below for value and k. */
+const LABEL_SPACE = 24
+const VALUE_SPACE = 46
+const ROW_GAP = 16
+const FOOTER_SPACE = 54
 
 function layout(spell: SpellAttributes, attributes: readonly Attribute[]): PlateLayout {
-  const span = attributes.length * CELL_SIZE + (attributes.length - 1) * CELL_GAP
-  const left = (WIDTH - span) / 2
+  const available = WIDTH - MARGIN * 2
+  const perRow = Math.max(1, Math.floor((available + CELL_GAP) / (MIN_CELL + CELL_GAP)))
+  const columns = Math.max(1, Math.min(attributes.length || 1, perRow))
+  const size = Math.min(MAX_CELL, (available - (columns - 1) * CELL_GAP) / columns)
+  const rows = Math.ceil((attributes.length || 1) / columns)
+
+  const dividerY = MAIN_TOP + MAIN_SIZE + 36
+  const rowHeight = LABEL_SPACE + size + VALUE_SPACE
+  const gridTop = dividerY + 20
+
+  const cells = attributes.map((attribute, i) => {
+    const row = Math.floor(i / columns)
+    const column = i % columns
+    // The last row may be short, so it is centred under the ones above.
+    const inRow = Math.min(columns, attributes.length - row * columns)
+    const rowWidth = inRow * size + (inRow - 1) * CELL_GAP
+    const left = (WIDTH - rowWidth) / 2
+    const top = gridTop + row * (rowHeight + ROW_GAP)
+
+    return {
+      attribute,
+      feature: spell[attribute.id] ?? attribute.features[0],
+      x: left + column * (size + CELL_GAP),
+      labelY: top + LABEL_SPACE - 8,
+      runeY: top + LABEL_SPACE,
+      valueY: top + LABEL_SPACE + size + 22,
+      size,
+    }
+  })
+
+  const gridBottom = gridTop + rows * rowHeight + (rows - 1) * ROW_GAP
+  const height = gridBottom + FOOTER_SPACE
 
   return {
     width: WIDTH,
-    height: HEIGHT,
+    height,
     title: { x: WIDTH / 2, y: 58 },
-    main: { x: (WIDTH - MAIN_SIZE) / 2, y: 82, size: MAIN_SIZE },
-    divider: { y: 548, x1: 64, x2: WIDTH - 64 },
-    cells: attributes.map((attribute, i) => ({
-      attribute,
-      feature: spell[attribute.id] ?? attribute.features[0],
-      x: left + i * (CELL_SIZE + CELL_GAP),
-      labelY: 582,
-      runeY: 594,
-      valueY: 736,
-      size: CELL_SIZE,
-    })),
-    footer: { x: WIDTH / 2, y: 790 },
+    main: { x: (WIDTH - MAIN_SIZE) / 2, y: MAIN_TOP, size: MAIN_SIZE },
+    divider: { y: dividerY, x1: 64, x2: WIDTH - 64 },
+    cells,
+    footer: { x: WIDTH / 2, y: height - 22 },
   }
 }
 
@@ -90,7 +120,8 @@ function layout(spell: SpellAttributes, attributes: readonly Attribute[]): Plate
  * The guide's own plate labels a cantrip as "Cantrip" rather than level 0, and
  * writes an absent attribute as a dash rather than leaving the reader guessing.
  */
-export function cellValue(attribute: Attribute, feature: string): string {
+export function cellValue(attribute: Attribute, feature: string | null): string {
+  if (feature === null) return 'Unnamed'
   if (attribute.id === 'level') return feature === '0' ? 'Cantrip' : `Level ${feature}`
   return feature === 'None' || feature === 'Blank' ? '—' : feature
 }
@@ -142,18 +173,24 @@ function escape(text: string): string {
   return text.replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' })[c]!)
 }
 
-/** Draw one rune's chords, nodes and start node inside its own box. */
+/**
+ * Draw one rune inside its own box.
+ *
+ * A nested viewport rather than a translation, so a figure whose bows reach
+ * outside the ring of nodes is scaled to fit its cell instead of spilling over
+ * its neighbours.
+ */
 function piece(
   p: PlatePiece,
   x: number,
   y: number,
+  box: number,
   colours: PlateInk,
   showScaffold: boolean,
 ): string[] {
-  const size = p.rune.size
-  const width = size / 70
-  const node = size / 110
-  const out: string[] = [`<g transform="translate(${x} ${y})">`]
+  const width = p.rune.strokeWidth
+  const node = p.rune.nodeRadius
+  const out: string[] = [`<g transform="${fitTransform(p.rune, x, y, box)}">`]
 
   if (showScaffold && p.rune.scaffold.length) {
     out.push(
@@ -205,16 +242,18 @@ export function plateToSvg(plate: Plate, colours: PlateInk): string {
   ]
 
   parts.push(
-    ...piece(plate.main, plan.main.x, plan.main.y, colours, true),
+    ...piece(plate.main, plan.main.x, plan.main.y, plan.main.size, colours, true),
     `<line x1="${plan.divider.x1}" y1="${plan.divider.y}" x2="${plan.divider.x2}" y2="${plan.divider.y}" stroke="${colours.gold}" stroke-width="1" opacity="0.6"/>`,
   )
 
   for (const { cell, ...p } of plate.cells) {
+    // Wrapped plates use smaller cells, and the captions follow them down.
+    const scale = Math.max(0.72, cell.size / 118)
     parts.push(
-      `<text x="${cell.x + cell.size / 2}" y="${cell.labelY}" text-anchor="middle" font-family="${FONT}" font-size="11" letter-spacing="1.6" fill="${colours.gold}">${escape(cell.attribute.label.toUpperCase())}</text>`,
-      ...piece(p, cell.x, cell.runeY, colours, false),
-      `<text x="${cell.x + cell.size / 2}" y="${cell.valueY}" text-anchor="middle" font-family="${BODY_FONT}" font-size="15" font-style="italic" fill="${colours.text}">${escape(cellValue(cell.attribute, cell.feature))}</text>`,
-      `<text x="${cell.x + cell.size / 2}" y="${cell.valueY + 17}" text-anchor="middle" font-family="${BODY_FONT}" font-size="11" fill="${colours.scaffoldInk}">k = ${cell.attribute.k}</text>`,
+      `<text x="${cell.x + cell.size / 2}" y="${cell.labelY}" text-anchor="middle" font-family="${FONT}" font-size="${(11 * scale).toFixed(1)}" letter-spacing="${(1.6 * scale).toFixed(2)}" fill="${colours.gold}">${escape(cell.attribute.label.toUpperCase())}</text>`,
+      ...piece(p, cell.x, cell.runeY, cell.size, colours, false),
+      `<text x="${cell.x + cell.size / 2}" y="${cell.valueY}" text-anchor="middle" font-family="${BODY_FONT}" font-size="${(15 * scale).toFixed(1)}" font-style="italic" fill="${colours.text}">${escape(cellValue(cell.attribute, cell.feature))}</text>`,
+      `<text x="${cell.x + cell.size / 2}" y="${cell.valueY + 17 * scale}" text-anchor="middle" font-family="${BODY_FONT}" font-size="${(11 * scale).toFixed(1)}" fill="${colours.scaffoldInk}">k = ${cell.attribute.k}</text>`,
     )
   }
 

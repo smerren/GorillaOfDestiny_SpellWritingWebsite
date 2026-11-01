@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { GOLD, layerInk, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../lib/palette'
 import { buildPlate, cellValue, type PlatePiece } from '../lib/plate'
 import type { Attribute, SpellAttributes } from '../lib/keys'
-import type { RuneStyle } from '../lib/rune'
+import { fitTransform, type RuneStyle } from '../lib/rune'
 
 interface Props {
   spell: SpellAttributes
@@ -19,6 +19,7 @@ function Piece({
   piece,
   x,
   y,
+  box,
   tintByAttribute,
   ink,
   showScaffold,
@@ -26,16 +27,16 @@ function Piece({
   piece: PlatePiece
   x: number
   y: number
+  box: number
   tintByAttribute: boolean
   ink: string
   showScaffold: boolean
 }) {
-  const size = piece.rune.size
-  const width = size / 70
-  const node = size / 110
+  const width = piece.rune.strokeWidth
+  const node = piece.rune.nodeRadius
 
   return (
-    <g transform={`translate(${x} ${y})`}>
+    <g transform={fitTransform(piece.rune, x, y, box)}>
       {showScaffold && (
         <g fill="none" stroke={SCAFFOLD_INK} strokeWidth={width / 6} opacity={0.4}>
           {piece.rune.scaffold.map((d, i) => (
@@ -116,6 +117,7 @@ export function PlateView({ spell, style, attributes, tintByAttribute, ink, titl
         piece={plate.main}
         x={layout.main.x}
         y={layout.main.y}
+        box={layout.main.size}
         tintByAttribute={tintByAttribute}
         ink={ink}
         showScaffold={style.showScaffold}
@@ -131,13 +133,16 @@ export function PlateView({ spell, style, attributes, tintByAttribute, ink, titl
         opacity={0.6}
       />
 
-      {plate.cells.map(({ cell, ...piece }) => (
+      {plate.cells.map(({ cell, ...piece }) => {
+        const scale = Math.max(0.72, cell.size / 118)
+        return (
         <g key={cell.attribute.id}>
           <text
             x={cell.x + cell.size / 2}
             y={cell.labelY}
             textAnchor="middle"
             className="plate-label"
+            style={{ fontSize: `${11 * scale}px`, letterSpacing: `${1.6 * scale}px` }}
             fill={GOLD}
           >
             {cell.attribute.label.toUpperCase()}
@@ -147,6 +152,7 @@ export function PlateView({ spell, style, attributes, tintByAttribute, ink, titl
             piece={piece}
             x={cell.x}
             y={cell.runeY}
+            box={cell.size}
             tintByAttribute={tintByAttribute}
             ink={ink}
             showScaffold={false}
@@ -157,21 +163,24 @@ export function PlateView({ spell, style, attributes, tintByAttribute, ink, titl
             y={cell.valueY}
             textAnchor="middle"
             className="plate-value"
+            style={{ fontSize: `${15 * scale}px` }}
             fill={TEXT_INK}
           >
             {cellValue(cell.attribute, cell.feature)}
           </text>
           <text
             x={cell.x + cell.size / 2}
-            y={cell.valueY + 17}
+            y={cell.valueY + 17 * scale}
             textAnchor="middle"
             className="plate-k"
+            style={{ fontSize: `${11 * scale}px` }}
             fill={SCAFFOLD_INK}
           >
             k = {cell.attribute.k}
           </text>
         </g>
-      ))}
+        )
+      })}
 
       <text
         x={layout.footer.x}

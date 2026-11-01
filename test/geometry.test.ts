@@ -10,7 +10,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { BASES, BASE_BY_ID, type Point } from '../src/lib/bases'
-import { chordPath } from '../src/lib/connectors'
+import { chord, chordPath } from '../src/lib/connectors'
 import { DEFAULT_SIDES, type SpellAttributes } from '../src/lib/keys'
 import { betweenIndices, bowTarget, buildRune, type RuneStyle } from '../src/lib/rune'
 
@@ -179,6 +179,74 @@ describe('bases', () => {
         expect(nodes.length, base.id).toBe(sides)
         const distinct = new Set(nodes.map((p) => `${p.x.toFixed(6)},${p.y.toFixed(6)}`))
         expect(distinct.size, base.id).toBe(sides)
+      }
+    }
+  })
+})
+
+describe('the frame', () => {
+  const bows = [0, 0.2, 0.45, 0.6, 0.8, 1]
+
+  it('reports an arc’s true reach, not its whole circle', () => {
+    // A shallow bow has an enormous radius. Counting a compass point of that
+    // circle which the arc never reaches would blow the frame wide open, which
+    // is what a signed-modulo slip used to do.
+    const p = { x: 84, y: 20 }
+    const q = { x: 91, y: 69 }
+    const { box } = chord(p, q, { x: 50, y: 50 }, 0.2)
+    expect(box.minX).toBeGreaterThan(75)
+    expect(box.maxX).toBeLessThan(95)
+    expect(box.minY).toBeGreaterThan(15)
+    expect(box.maxY).toBeLessThan(75)
+  })
+
+  it('keeps a polygon exactly its nominal size at every bow', () => {
+    for (const curvature of bows) {
+      const rune = buildRune(SPELL, { ...STYLE, base: 'polygon', curvature }, 100)
+      expect(rune.viewBox.size, `curvature ${curvature}`).toBeCloseTo(100, 6)
+    }
+  })
+
+  it('never shrinks a figure below its nominal size', () => {
+    for (const base of BASES) {
+      for (const curvature of bows) {
+        const rune = buildRune(SPELL, { ...STYLE, base: base.id, curvature }, 100)
+        expect(rune.viewBox.size, `${base.id} ${curvature}`).toBeGreaterThanOrEqual(100 - 1e-6)
+      }
+    }
+  })
+
+  it('grows only as far as the ink actually reaches', () => {
+    for (const base of BASES) {
+      for (const curvature of bows) {
+        const style = { ...STYLE, base: base.id, curvature, showScaffold: true }
+        const rune = buildRune(SPELL, style, 100)
+        const { x, y, size } = rune.viewBox
+        for (let i = 0; i < N; i++) {
+          for (const k of [1, 2, 3, 4, 5]) {
+            const j = (i + k) % N
+            const { box } = chord(
+              rune.nodes[i],
+              rune.nodes[j],
+              bowTarget(rune, base.closed, i, j),
+              curvature,
+            )
+            expect(box.minX, `${base.id} ${curvature}`).toBeGreaterThanOrEqual(x - 1e-6)
+            expect(box.minY, `${base.id} ${curvature}`).toBeGreaterThanOrEqual(y - 1e-6)
+            expect(box.maxX, `${base.id} ${curvature}`).toBeLessThanOrEqual(x + size + 1e-6)
+            expect(box.maxY, `${base.id} ${curvature}`).toBeLessThanOrEqual(y + size + 1e-6)
+          }
+        }
+      }
+    }
+  })
+
+  it('does not move when the scaffold is shown or hidden', () => {
+    for (const base of BASES) {
+      for (const curvature of bows) {
+        const on = buildRune(SPELL, { ...STYLE, base: base.id, curvature, showScaffold: true }, 100)
+        const off = buildRune(SPELL, { ...STYLE, base: base.id, curvature, showScaffold: false }, 100)
+        expect(off.viewBox, `${base.id} ${curvature}`).toEqual(on.viewBox)
       }
     }
   })

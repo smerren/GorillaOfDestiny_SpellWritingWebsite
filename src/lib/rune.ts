@@ -4,7 +4,7 @@
  */
 
 import { BASE_BY_ID, type BaseId, type Point } from './bases'
-import { chordPath } from './connectors'
+import { chord, unionBox, type Box } from './connectors'
 import { encodeSpell, scaffoldChords, type Chord, type Layer } from './encoding'
 import type { Attribute, SpellAttributes } from './keys'
 
@@ -26,7 +26,35 @@ export interface Rune {
   readonly centre: Point
   readonly layers: readonly DrawnLayer[]
   readonly scaffold: readonly string[]
+  /** The nominal frame the nodes were laid out in. */
   readonly size: number
+  /**
+   * A square that holds the whole drawing, bows included. A deep bow on an
+   * open base reaches well outside the ring of nodes, so the frame follows the
+   * ink rather than the other way round.
+   */
+  readonly viewBox: { readonly x: number; readonly y: number; readonly size: number }
+  /** Line weights, scaled so a shrunk figure keeps the same visual weight. */
+  readonly strokeWidth: number
+  readonly nodeRadius: number
+}
+
+/**
+ * Place a rune's own frame inside a box on a page.
+ *
+ * An explicit transform rather than a nested <svg>: nested viewports are valid
+ * SVG but are not honoured by every renderer that might open an exported file.
+ */
+export function fitTransform(rune: Rune, x: number, y: number, box: number): string {
+  const scale = box / rune.viewBox.size
+  const tx = x - rune.viewBox.x * scale
+  const ty = y - rune.viewBox.y * scale
+  return `translate(${tx.toFixed(3)} ${ty.toFixed(3)}) scale(${scale.toFixed(5)})`
+}
+
+export function viewBoxOf(rune: Rune): string {
+  const { x, y, size } = rune.viewBox
+  return `${x.toFixed(2)} ${y.toFixed(2)} ${size.toFixed(2)} ${size.toFixed(2)}`
 }
 
 /** Leaves room for the stroke and the node rings to sit inside the viewBox. */
@@ -122,13 +150,17 @@ export function buildRune(
     y: nodes.reduce((t, p) => t + p.y, 0) / nodes.length,
   }
 
-  const draw = (c: Chord) =>
-    chordPath(
+  const boxes: Box[] = []
+  const draw = (c: Chord) => {
+    const drawn = chord(
       nodes[c.from],
       nodes[c.to],
       bowTowards(nodes, base.closed, c.from, c.to, centre),
       style.curvature,
     )
+    boxes.push(drawn.box)
+    return drawn.d
+  }
 
   const layers = encodeSpell(spell, style.sides, attributes).map((layer) => ({
     ...layer,
@@ -137,7 +169,31 @@ export function buildRune(
 
   const scaffold = style.showScaffold ? scaffoldChords(style.sides, attributes).map(draw) : []
 
-  return { nodes, centre, layers, scaffold, size }
+  // The frame is the nominal square unless something reaches past it, so a
+  // figure keeps a steady, familiar size and only pulls back when a deep bow
+  // would otherwise be cropped.
+  const padding = size / 110 + size / 70
+  const reach = unionBox(boxes)
+  const spill = Math.max(
+    0,
+    padding - reach.minX,
+    padding - reach.minY,
+    reach.maxX + padding - size,
+    reach.maxY + padding - size,
+  )
+  const span = size + spill * 2
+  const viewBox = { x: -spill, y: -spill, size: span }
+
+  return {
+    nodes,
+    centre,
+    layers,
+    scaffold,
+    size,
+    viewBox,
+    strokeWidth: span / 70,
+    nodeRadius: span / 110,
+  }
 }
 
 /** A standalone SVG document, for download or copy-paste. */
@@ -145,12 +201,12 @@ export function runeToSvg(
   rune: Rune,
   options: { ink: string; scaffoldInk: string; showNodes: boolean; showStartNode: boolean },
 ): string {
-  const { size } = rune
-  const stroke = size / 70
-  const node = size / 110
+  const stroke = rune.strokeWidth
+  const node = rune.nodeRadius
+  const px = Math.round(rune.size * 6)
 
   const parts: string[] = [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size * 6}" height="${size * 6}">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBoxOf(rune)}" width="${px}" height="${px}">`,
   ]
 
   if (rune.scaffold.length) {
