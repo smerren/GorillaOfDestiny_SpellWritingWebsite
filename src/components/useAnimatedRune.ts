@@ -49,6 +49,12 @@ const nameOf = (attributeId: string, from: number) => `${attributeId}:${from}`
 export function useAnimatedRune(figure: Figure, style: RuneStyle, size = 100): AnimatedRune {
   const target = useMemo(() => buildRune(figure, style, size), [figure, style, size])
   const closed = BASE_BY_ID[style.base].closed
+  // The same unit points buildRune settles its bows on, so the moving figure
+  // and the still one never disagree about which way a line curves.
+  const unit = useMemo(
+    () => BASE_BY_ID[style.base].place(style.sides),
+    [style.base, style.sides],
+  )
 
   const goal: Frame = useMemo(
     () => ({ nodes: target.nodes, viewBox: target.viewBox }),
@@ -62,12 +68,12 @@ export function useAnimatedRune(figure: Figure, style: RuneStyle, size = 100): A
         // Settled here, on the arrangement being moved towards, and then held
         // for the whole move. Deciding it per frame lets a line swap sides
         // partway and flicker.
-        const bow = bowSignOf(target.nodes, closed, chord.from, chord.to) * style.curvature
+        const bow = bowSignOf(unit, closed, chord.from, chord.to) * style.curvature
         out.set(nameOf(layer.attribute.id, chord.from), { grown: 1, bow })
       }
     }
     return out
-  }, [target, closed, style.curvature])
+  }, [target, unit, closed, style.curvature])
 
   // What is on screen. The next move starts from here, so interrupting one
   // half way does not jump.
@@ -160,7 +166,7 @@ export function useAnimatedRune(figure: Figure, style: RuneStyle, size = 100): A
           nodes,
           c.from,
           c.to,
-          bowSignOf(target.nodes, closed, c.from, c.to) * style.curvature,
+          bowSignOf(unit, closed, c.from, c.to) * style.curvature,
         ),
       )
     : []

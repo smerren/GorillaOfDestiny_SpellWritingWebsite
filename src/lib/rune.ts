@@ -4,7 +4,7 @@
  */
 
 import { BASE_BY_ID, type BaseId, type Point } from './bases'
-import { bowDirection, bowedChord, chord, unionBox, type Box } from './connectors'
+import { bowDirection, bowedChord, unionBox, type Box } from './connectors'
 import { scaffoldChords, type Chord, type Figure, type Layer } from './encoding'
 
 
@@ -190,13 +190,15 @@ export function buildRune(figure: Figure, style: RuneStyle, size = 100): Rune {
     y: nodes.reduce((t, p) => t + p.y, 0) / nodes.length,
   }
 
+  // Which way each line bows is settled on the base's own unit points, not on
+  // the scaled ones. The decision is the same figure at any size, so the large
+  // figure on a plate and the small one beside it cannot disagree.
   const boxes: Box[] = []
   const draw = (c: Chord) => {
-    const drawn = chord(
+    const drawn = bowedChord(
       nodes[c.from],
       nodes[c.to],
-      bowTowards(nodes, base.closed, c.from, c.to, centre),
-      style.curvature,
+      bowSignOf(unit, base.closed, c.from, c.to) * style.curvature,
     )
     boxes.push(drawn.box)
     return drawn.d

@@ -9,6 +9,8 @@ import { ATTRIBUTES, DEFAULT_SIDES, type SpellAttributes } from '../src/lib/keys
 import { GOLD, INK, layerInk, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../src/lib/palette'
 import { figureFromSpell } from '../src/lib/encoding'
 import { buildPlate, cellValue, plateToSvg } from '../src/lib/plate'
+import { buildRune } from '../src/lib/rune'
+import spells from '../src/data/spells.json'
 import type { RuneStyle } from '../src/lib/rune'
 
 const STYLE: RuneStyle = {
@@ -118,6 +120,128 @@ describe('plate', () => {
     })
     for (const attribute of ATTRIBUTES) {
       expect(svg).toContain(layerInk(attribute.k))
+    }
+  })
+})
+
+/**
+ * A broken-out symbol must be the same figure as the one above it, only
+ * smaller. They are built at different sizes, so anything that decides a
+ * shape from absolute coordinates can make them disagree — which is how a
+ * chord passing near the centre of the figure came to bow one way in the
+ * large drawing and the other way in the small one.
+ */
+describe('a cell is the main figure, smaller', () => {
+  interface Shape {
+    readonly kind: string
+    /** Which way the arc bows, and whether it is the long way round. */
+    readonly flags: string
+    /** Positions and radius as fractions of the frame. */
+    readonly numbers: number[]
+  }
+
+  /**
+   * A path as fractions of its own frame, so two sizes can be compared.
+   *
+   * Path text is rounded to three places before it is scaled, so the numbers
+   * only agree to about a part in ten thousand; the flags, which say which way
+   * a line bows, must agree exactly.
+   */
+  function shapeOf(d: string, vb: { x: number; y: number; size: number }): Shape {
+    const line = d.match(/^M (-?[\d.]+) (-?[\d.]+) L (-?[\d.]+) (-?[\d.]+)$/)
+    const arc = d.match(
+      /^M (-?[\d.]+) (-?[\d.]+) A (-?[\d.]+) (-?[\d.]+) 0 (\d) (\d) (-?[\d.]+) (-?[\d.]+)$/,
+    )
+    const fx = (v: string) => (Number(v) - vb.x) / vb.size
+    const fy = (v: string) => (Number(v) - vb.y) / vb.size
+
+    if (line) {
+      return { kind: 'line', flags: '', numbers: [fx(line[1]), fy(line[2]), fx(line[3]), fy(line[4])] }
+    }
+    if (arc) {
+      return {
+        kind: 'arc',
+        flags: `${arc[5]}${arc[6]}`,
+        numbers: [fx(arc[1]), fy(arc[2]), Number(arc[3]) / vb.size, fx(arc[7]), fy(arc[8])],
+      }
+    }
+    return { kind: 'point', flags: '', numbers: [] }
+  }
+
+  // The whole book. The case that first showed this up — Gate on a curved
+  // base — is a hundred and thirty spells in, so a sample would have missed it.
+  const library = spells as Array<Record<string, string | number>>
+
+  it('draws every layer the same way at both sizes', () => {
+    const wrong: string[] = []
+
+    for (const spell of library) {
+      const figure = figureFromSpell(
+        {
+          level: String(spell.level),
+          school: spell.school as string,
+          damage: spell.damage as string,
+          area: spell.area as string,
+          range: spell.range as string,
+        },
+        DEFAULT_SIDES,
+        ATTRIBUTES,
+      )
+
+      for (const base of ['polygon', 'cubic', 'quadratic', 'quarter', 'semicircle'] as const) {
+        for (const curvature of [0, 0.45, 0.6, 1]) {
+          const style = { ...STYLE, base, curvature }
+          const plate = buildPlate(figure, style, String(spell.name))
+          const main = buildRune(figure, style, plate.layout.main.size)
+
+          for (const entry of plate.cells) {
+            const id = entry.cell.attribute.id
+            const mine = main.layers.find((l) => l.attribute.id === id)!
+            const large = mine.paths.map((d) => shapeOf(d, main.viewBox))
+            const small = entry.groups[0].paths.map((d) => shapeOf(d, entry.rune.viewBox))
+            const where = `${spell.name} ${base} curvature=${curvature} ${id}`
+
+            if (large.length !== small.length) {
+              wrong.push(`${where}: ${large.length} lines against ${small.length}`)
+              continue
+            }
+            large.forEach((shape, i) => {
+              const other = small[i]
+              if (shape.kind !== other.kind || shape.flags !== other.flags) {
+                wrong.push(`${where}: ${shape.kind}${shape.flags} against ${other.kind}${other.flags}`)
+                return
+              }
+              shape.numbers.forEach((n, j) => {
+                if (Math.abs(n - other.numbers[j]) > 1e-3) {
+                  wrong.push(`${where}: ${n.toFixed(5)} against ${other.numbers[j].toFixed(5)}`)
+                }
+              })
+            })
+          }
+        }
+      }
+    }
+
+    expect(wrong).toEqual([])
+  })
+
+  it('frames both at the same relative size', () => {
+    const figure = figureFromSpell(
+      { level: '9', school: 'Conjuration', damage: 'None', area: 'None', range: '60 Feet' },
+      DEFAULT_SIDES,
+      ATTRIBUTES,
+    )
+    for (const base of ['polygon', 'cubic', 'quadratic', 'quarter', 'semicircle'] as const) {
+      for (const curvature of [0, 0.45, 0.8, 1]) {
+        const style = { ...STYLE, base, curvature }
+        const plate = buildPlate(figure, style, 'Gate')
+        const main = buildRune(figure, style, plate.layout.main.size)
+        const mainScale = main.viewBox.size / plate.layout.main.size
+        for (const entry of plate.cells) {
+          const cellScale = entry.rune.viewBox.size / entry.cell.size
+          expect(cellScale, `${base} ${curvature} ${entry.cell.attribute.id}`).toBeCloseTo(mainScale, 2)
+        }
+      }
     }
   })
 })

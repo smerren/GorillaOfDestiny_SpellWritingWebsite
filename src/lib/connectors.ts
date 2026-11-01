@@ -104,9 +104,22 @@ export function bowDirection(p: Point, q: Point, towards: Point): number {
   const dy = q.y - p.y
   const length = Math.hypot(dx, dy)
   if (length < FLAT) return 1
+
   const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 }
-  const dot = (-dy / length) * (towards.x - mid.x) + (dx / length) * (towards.y - mid.y)
-  return dot < 0 ? -1 : 1
+  const ax = towards.x - mid.x
+  const ay = towards.y - mid.y
+  const reach = Math.hypot(ax, ay)
+  if (reach < FLAT) return 1
+
+  // Measured as a cosine rather than a raw dot product. The raw figure grows
+  // with the drawing, so the same chord drawn large and drawn small rounded to
+  // opposite signs where the point sits almost exactly on the chord — and the
+  // two came out bowing opposite ways.
+  const cosine = ((-dy / length) * ax + (dx / length) * ay) / reach
+  // Nothing to choose between the sides at that point, so choose the same one
+  // every time rather than whichever way the arithmetic fell.
+  if (Math.abs(cosine) < 1e-9) return 1
+  return cosine < 0 ? -1 : 1
 }
 
 export function chord(p: Point, q: Point, towards: Point, curvature: number): Chord {

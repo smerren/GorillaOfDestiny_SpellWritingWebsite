@@ -259,8 +259,16 @@ and easing its distance keeps the figure spread the whole way. A swung dot can b
 reach wider than either end of the move, so the frame grows to hold it rather than
 cropping.
 
-Which way a line bows is settled once, on the arrangement being moved towards, and held
-for the whole move. Deciding it per frame lets a line swap sides partway past a
+Which way a line bows is decided from the base's **unit** points, before anything is
+scaled, and the test for which side is inward is a cosine rather than a raw dot product.
+Both matter for the same reason: a chord passing near the centre of the figure is a
+hair's breadth from either answer, and an unnormalised test rounded the large drawing on
+a spellbook page and the small one beside it to opposite signs — so a symbol bowed one
+way above and the other way below. Where there is genuinely nothing to choose, the same
+side is chosen every time rather than whichever way the arithmetic fell.
+
+In an animation the side is settled once, on the arrangement being moved towards, and
+held for the whole move. Deciding it per frame lets a line swap sides partway past a
 degenerate arrangement and flicker — on a ring to quarter-circle change, twelve of them
 did. The bow is carried as a signed amount, so a line that genuinely changes sides eases
 through straight rather than snapping over.
