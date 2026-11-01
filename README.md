@@ -246,6 +246,20 @@ and can fail outright in a private window — losing a draft and nothing else.
 Attributes and feature lists of your own are done — that is the Forge tab — and
 `binary.ts` and `bases.ts` were written against an arbitrary dot count from the start.
 
+## Publishing
+
+Pushing to `main` builds the site and publishes it to GitHub Pages, by way of
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). It typechecks and runs the
+tests first, so a broken encoding cannot reach the published page.
+
+Turn it on once, under **Settings → Pages → Build and deployment → Source: GitHub
+Actions**. The site then lands at `https://<user>.github.io/<repo>/`.
+
+Pages serves the built artifact directly, so Jekyll never runs over it and no `.nojekyll`
+file is needed — even if your user page is itself a Jekyll site. Asset paths are relative
+(`base: './'` in `vite.config.ts`), so the site works under `/<repo>/` without any further
+configuration.
+
 ## Credits and licensing
 
 The spell writing system is the work of **The Gorilla of Destiny**
