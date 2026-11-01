@@ -1,26 +1,17 @@
-import { ATTRIBUTES, type Attribute, type AttributeId, type SpellAttributes } from '../lib/keys'
+import type { AttributeId } from '../lib/keys'
+import type { Figure } from '../lib/encoding'
 import { layerInk } from '../lib/palette'
-import { bitsFor } from '../lib/encoding'
+
 
 interface Props {
-  spell: SpellAttributes
-  sides: number
-  attributes?: readonly Attribute[]
+  figure: Figure
   tintByAttribute: boolean
   ink: string
   onChange: (id: AttributeId, feature: string) => void
   onFocus: (id: AttributeId | null) => void
 }
 
-export function AttributePanel({
-  spell,
-  sides,
-  attributes = ATTRIBUTES,
-  tintByAttribute,
-  ink,
-  onChange,
-  onFocus,
-}: Props) {
+export function AttributePanel({ figure, tintByAttribute, ink, onChange, onFocus }: Props) {
   return (
     <section className="panel">
       <h2>Attributes</h2>
@@ -30,9 +21,7 @@ export function AttributePanel({
       </p>
 
       <div className="attributes">
-        {attributes.map((attribute) => {
-          const feature = spell[attribute.id] ?? attribute.features[0]
-          const bits = bitsFor(attribute, feature, sides)
+        {figure.layers.map(({ attribute, feature, bits }) => {
           return (
             <label
               key={attribute.id}
@@ -53,9 +42,12 @@ export function AttributePanel({
               </span>
 
               <select
-                value={feature}
+                value={feature ?? ''}
                 onChange={(e) => onChange(attribute.id, e.target.value)}
               >
+                {feature === null && (
+                  <option value="">Drawn by hand — no feature</option>
+                )}
                 {attribute.features.map((option) => (
                   <option key={option} value={option}>
                     {attribute.id === 'level' && option === '0' ? '0 (cantrip)' : option}

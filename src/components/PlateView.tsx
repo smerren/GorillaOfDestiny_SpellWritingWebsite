@@ -2,13 +2,12 @@ import { useMemo } from 'react'
 
 import { GOLD, layerInk, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../lib/palette'
 import { buildPlate, cellValue, type PlatePiece } from '../lib/plate'
-import type { Attribute, SpellAttributes } from '../lib/keys'
+import type { Figure } from '../lib/encoding'
 import { fitTransform, type RuneStyle } from '../lib/rune'
 
 interface Props {
-  spell: SpellAttributes
+  figure: Figure
   style: RuneStyle
-  attributes?: readonly Attribute[]
   tintByAttribute: boolean
   ink: string
   title: string
@@ -77,11 +76,8 @@ function Piece({
   )
 }
 
-export function PlateView({ spell, style, attributes, tintByAttribute, ink, title }: Props) {
-  const plate = useMemo(
-    () => buildPlate(spell, style, title, attributes),
-    [spell, style, title, attributes],
-  )
+export function PlateView({ figure, style, tintByAttribute, ink, title }: Props) {
+  const plate = useMemo(() => buildPlate(figure, style, title), [figure, style, title])
   const { layout } = plate
 
   return (

@@ -9,7 +9,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { minimumSides, uniqueCount } from '../src/lib/binary'
-import { encodeSpell } from '../src/lib/encoding'
+import { encodeSpell, figureFromSpell } from '../src/lib/encoding'
 import { buildRune } from '../src/lib/rune'
 import {
   BLANK,
@@ -102,14 +102,15 @@ describe('compiling a scheme', () => {
 
   it('keeps layers off each other’s edges', () => {
     const scheme = compile(STARTER)
-    const rune = buildRune(blankSpell(scheme), {
+    const figure = figureFromSpell(blankSpell(scheme), scheme.sides, scheme.attributes)
+    const rune = buildRune(figure, {
       base: 'polygon',
       sides: scheme.sides,
       curvature: 0,
       showScaffold: true,
       showNodes: true,
       showStartNode: true,
-    }, 100, scheme.attributes)
+    }, 100)
     const seen = new Set<string>()
     for (const attribute of scheme.attributes) {
       for (let i = 0; i < scheme.sides; i++) {

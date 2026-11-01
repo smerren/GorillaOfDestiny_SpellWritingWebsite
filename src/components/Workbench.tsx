@@ -5,8 +5,14 @@ import { PlateView } from './PlateView'
 import { RuneView } from './RuneView'
 import { StylePanel } from './StylePanel'
 import { downloadPng, downloadText, slug } from '../lib/download'
-import { encodeSpell } from '../lib/encoding'
-import type { AttributeId, SpellAttributes } from '../lib/keys'
+import {
+  bitsFor,
+  emptyBits,
+  figureFromBits,
+  toggleChord,
+  type Bits,
+} from '../lib/encoding'
+import type { AttributeId } from '../lib/keys'
 import { GOLD, layerInk, INK, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../lib/palette'
 import { buildPlate, plateToSvg } from '../lib/plate'
 import { buildRune, runeToSvg, type RuneStyle } from '../lib/rune'
@@ -14,8 +20,12 @@ import type { Scheme } from '../lib/scheme'
 
 interface Props {
   scheme: Scheme
-  spell: SpellAttributes
-  onSpell: (next: SpellAttributes) => void
+  /**
+   * What is drawn, layer by layer. Bits rather than feature names, because a
+   * figure drawn by hand can spell something the dictionary has no word for.
+   */
+  bits: Bits
+  onBits: (next: Bits) => void
   title: string | null
   onTitle: (next: string | null) => void
   /** Extra control panels for this tab: a spellbook, a scheme editor. */
@@ -24,7 +34,7 @@ interface Props {
 
 type View = 'rune' | 'plate'
 
-export function Workbench({ scheme, spell, onSpell, title, onTitle, children }: Props) {
+export function Workbench({ scheme, bits, onBits, title, onTitle, children }: Props) {
   const [base, setBase] = useState<RuneStyle['base']>('polygon')
   const [curvature, setCurvature] = useState(0)
   const [showScaffold, setScaffold] = useState(true)
@@ -35,6 +45,7 @@ export function Workbench({ scheme, spell, onSpell, title, onTitle, children }: 
   const [ink, setInk] = useState(INK)
   const [focus, setFocus] = useState<AttributeId | null>(null)
   const [view, setView] = useState<View>('rune')
+  const [held, setHeld] = useState<number | null>(null)
 
   const style = useMemo<RuneStyle>(
     () => ({
@@ -62,22 +73,34 @@ export function Workbench({ scheme, spell, onSpell, title, onTitle, children }: 
     setCurvature((c) => (id === 'arc' && c < 0.05 ? 0.6 : c))
   }, [])
 
+  const figure = useMemo(
+    () => figureFromBits(bits, scheme.sides, scheme.attributes),
+    [bits, scheme],
+  )
+
   const setAttribute = useCallback(
-    (id: AttributeId, feature: string) => onSpell({ ...spell, [id]: feature }),
-    [spell, onSpell],
+    (id: AttributeId, feature: string) => {
+      const attribute = scheme.attributes.find((a) => a.id === id)
+      if (!attribute || feature === '') return
+      onBits({ ...bits, [id]: bitsFor(attribute, feature, scheme.sides) })
+    },
+    [bits, onBits, scheme],
+  )
+
+  const toggle = useCallback(
+    (a: number, b: number) => {
+      const next = toggleChord(figure, a, b)
+      if (next) onBits(next)
+    },
+    [figure, onBits],
   )
 
   const shown = title ?? 'Unnamed rune'
-  const attributes = scheme.attributes
-
-  const layers = useMemo(
-    () => encodeSpell(spell, scheme.sides, attributes),
-    [spell, scheme.sides, attributes],
-  )
+  const layers = figure.layers
 
   const svg = useMemo(() => {
     if (view === 'plate') {
-      return plateToSvg(buildPlate(spell, style, shown, attributes), {
+      return plateToSvg(buildPlate(figure, style, shown), {
         ink,
         scaffoldInk: SCAFFOLD_INK,
         parchment: PARCHMENT,
@@ -86,13 +109,13 @@ export function Workbench({ scheme, spell, onSpell, title, onTitle, children }: 
         tint: tintByAttribute ? (a) => layerInk(a.k) : null,
       })
     }
-    return runeToSvg(buildRune(spell, style, 100, attributes), {
+    return runeToSvg(buildRune(figure, style, 100), {
       ink,
       scaffoldInk: SCAFFOLD_INK,
       showNodes: style.showNodes,
       showStartNode: style.showStartNode,
     })
-  }, [view, spell, style, shown, attributes, tintByAttribute, ink])
+  }, [view, figure, style, shown, tintByAttribute, ink])
 
   return (
     <main className="layout">
@@ -121,24 +144,36 @@ export function Workbench({ scheme, spell, onSpell, title, onTitle, children }: 
         <figure className="plate">
           {view === 'rune' ? (
             <RuneView
-              spell={spell}
+              figure={figure}
               style={style}
-              attributes={attributes}
               tintByAttribute={tintByAttribute}
               ink={ink}
               focus={focus}
+              onToggle={toggle}
+              held={held}
+              onHold={setHeld}
             />
           ) : (
             <PlateView
-              spell={spell}
+              figure={figure}
               style={style}
-              attributes={attributes}
               tintByAttribute={tintByAttribute}
               ink={ink}
               title={shown}
             />
           )}
           <figcaption>
+            {view === 'rune' && (
+              <p className="draw-hint">
+                {held === null ? (
+                  <>Click a node to begin a line, or set an attribute below.</>
+                ) : (
+                  <>
+                    Now click another node to draw or erase. <strong>Esc</strong> to let go.
+                  </>
+                )}
+              </p>
+            )}
             <input
               className="title-input"
               value={title ?? ''}
@@ -170,7 +205,9 @@ export function Workbench({ scheme, spell, onSpell, title, onTitle, children }: 
                       />
                       {layer.attribute.label}
                     </th>
-                    <td className="feature">{layer.feature}</td>
+                    <td className="feature">
+                      {layer.feature ?? <span className="unnamed">drawn by hand</span>}
+                    </td>
                     <td>
                       <code>{layer.bits}</code>
                     </td>
@@ -201,15 +238,23 @@ export function Workbench({ scheme, spell, onSpell, title, onTitle, children }: 
             <button type="button" onClick={() => void navigator.clipboard?.writeText(svg)}>
               Copy SVG
             </button>
+            <button
+              type="button"
+              onClick={() => {
+                onBits(emptyBits(scheme.sides, scheme.attributes))
+                setHeld(null)
+                onTitle(null)
+              }}
+            >
+              Clear
+            </button>
           </div>
         </div>
       </div>
 
       <aside className="controls">
         <AttributePanel
-          spell={spell}
-          sides={scheme.sides}
-          attributes={attributes}
+          figure={figure}
           tintByAttribute={tintByAttribute}
           ink={ink}
           onChange={setAttribute}

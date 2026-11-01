@@ -3,9 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { SchemeEditor } from './components/SchemeEditor'
 import { SpellLibrary, type LibrarySpell } from './components/SpellLibrary'
 import { Workbench } from './components/Workbench'
-import { EMPTY_SPELL, type SpellAttributes } from './lib/keys'
+import { bitsOf, emptyBits, figureFromSpell, type Bits } from './lib/encoding'
+import { EMPTY_SPELL } from './lib/keys'
 import {
-  blankSpell,
   compile,
   FIVE_E,
   loadDraft,
@@ -18,29 +18,25 @@ type Tab = 'scribe' | 'forge'
 
 /** The 5e dictionary: a fixed scheme with a spellbook to draw from. */
 function Scribe() {
-  const [spell, setSpell] = useState<SpellAttributes>(EMPTY_SPELL)
+  const [bits, setBits] = useState<Bits>(() =>
+    bitsOf(figureFromSpell(EMPTY_SPELL, FIVE_E.sides, FIVE_E.attributes)),
+  )
   const [name, setName] = useState<string | null>(null)
 
   const pick = useCallback((picked: LibrarySpell) => {
     const { name: picked_name, ...attributes } = picked
-    setSpell(attributes)
+    setBits(bitsOf(figureFromSpell(attributes, FIVE_E.sides, FIVE_E.attributes)))
     setName(picked_name)
   }, [])
 
-  const change = useCallback((next: SpellAttributes) => {
-    setSpell(next)
-    // Once an attribute is altered this is no longer the spell from the book.
+  const change = useCallback((next: Bits) => {
+    setBits(next)
+    // Once a line is altered this is no longer the spell from the book.
     setName(null)
   }, [])
 
   return (
-    <Workbench
-      scheme={FIVE_E}
-      spell={spell}
-      onSpell={change}
-      title={name}
-      onTitle={setName}
-    >
+    <Workbench scheme={FIVE_E} bits={bits} onBits={change} title={name} onTitle={setName}>
       <SpellLibrary current={name} onPick={pick} />
     </Workbench>
   )
@@ -49,7 +45,7 @@ function Scribe() {
 /** A scheme of the author's own making. */
 function Forge() {
   const [draft, setDraft] = useState<Draft>(() => loadDraft() ?? STARTER)
-  const [chosen, setChosen] = useState<SpellAttributes>({})
+  const [drawn, setDrawn] = useState<Bits>({})
   const [name, setName] = useState<string | null>(null)
 
   useEffect(() => {
@@ -58,26 +54,20 @@ function Forge() {
 
   const scheme = useMemo(() => compile(draft), [draft])
 
-  // Features come and go while the scheme is being written, so anything no
-  // longer on offer falls back to the blank rather than hanging about unseen.
-  const spell = useMemo(() => {
-    const blank = blankSpell(scheme)
-    const out: SpellAttributes = { ...blank }
+  // Attributes come and go while a scheme is being written, and the node count
+  // moves with them, so anything that no longer fits falls back to blank
+  // rather than hanging about at the wrong length.
+  const bits = useMemo(() => {
+    const out = emptyBits(scheme.sides, scheme.attributes)
     for (const attribute of scheme.attributes) {
-      const picked = chosen[attribute.id]
-      if (picked && attribute.features.includes(picked)) out[attribute.id] = picked
+      const written = drawn[attribute.id]
+      if (written && written.length === scheme.sides) out[attribute.id] = written
     }
     return out
-  }, [scheme, chosen])
+  }, [scheme, drawn])
 
   return (
-    <Workbench
-      scheme={scheme}
-      spell={spell}
-      onSpell={setChosen}
-      title={name}
-      onTitle={setName}
-    >
+    <Workbench scheme={scheme} bits={bits} onBits={setDrawn} title={name} onTitle={setName}>
       <SchemeEditor draft={draft} onDraft={setDraft} onReset={() => setDraft(STARTER)} />
     </Workbench>
   )

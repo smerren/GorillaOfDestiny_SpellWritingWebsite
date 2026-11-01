@@ -1,37 +1,72 @@
 import { useMemo } from 'react'
 
+import { chordOwner, type Figure } from '../lib/encoding'
 import { layerInk, SCAFFOLD_INK } from '../lib/palette'
 import { buildRune, viewBoxOf, type RuneStyle } from '../lib/rune'
-import type { Attribute, SpellAttributes } from '../lib/keys'
 
 interface Props {
-  spell: SpellAttributes
+  figure: Figure
   style: RuneStyle
-  attributes?: readonly Attribute[]
   tintByAttribute: boolean
   /** Used for every layer when they are not tinted apart. */
   ink: string
   /** Dims every layer but this one, so a reader can pick an attribute out. */
   focus: string | null
+  /** When set, nodes can be joined and parted by hand. */
+  onToggle?: (a: number, b: number) => void
+  /** The node waiting for its partner, if a line is half-drawn. */
+  held?: number | null
+  onHold?: (node: number | null) => void
 }
 
 const VIEW = 100
 
-export function RuneView({ spell, style, attributes, tintByAttribute, ink, focus }: Props) {
-  const rune = useMemo(
-    () => buildRune(spell, style, VIEW, attributes),
-    [spell, style, attributes],
-  )
+export function RuneView({
+  figure,
+  style,
+  tintByAttribute,
+  ink,
+  focus,
+  onToggle,
+  held = null,
+  onHold,
+}: Props) {
+  const rune = useMemo(() => buildRune(figure, style, VIEW), [figure, style])
+  const drawable = Boolean(onToggle && onHold)
 
   const stroke = rune.strokeWidth
   const node = rune.nodeRadius
 
+  /** Which nodes would make a line with the one being held. */
+  const reachable = useMemo(() => {
+    if (held === null) return null
+    const out = new Set<number>()
+    for (let i = 0; i < figure.sides; i++) {
+      if (chordOwner(figure.attributes, figure.sides, held, i)) out.add(i)
+    }
+    return out
+  }, [held, figure])
+
+  const press = (index: number) => {
+    if (!drawable) return
+    if (held === null) {
+      onHold?.(index)
+      return
+    }
+    if (held === index) {
+      onHold?.(null)
+      return
+    }
+    onToggle?.(held, index)
+    onHold?.(null)
+  }
+
   return (
     <svg
-      className="rune"
+      className={drawable ? 'rune drawable' : 'rune'}
       viewBox={viewBoxOf(rune)}
       role="img"
-      aria-label={`Rune made of ${rune.layers.reduce((t, l) => t + l.chords.length, 0)} chords`}
+      aria-label={`Rune of ${rune.layers.reduce((t, l) => t + l.chords.length, 0)} chords`}
     >
       {style.showScaffold && (
         <g fill="none" stroke={SCAFFOLD_INK} strokeWidth={stroke / 6} opacity={0.4}>
@@ -71,6 +106,48 @@ export function RuneView({ spell, style, attributes, tintByAttribute, ink, focus
       {style.showStartNode && rune.nodes.length > 0 && (
         <circle cx={rune.nodes[0].x} cy={rune.nodes[0].y} r={node * 1.35} fill="#2a1a10" />
       )}
+
+      {drawable &&
+        rune.nodes.map((p, i) => {
+          const isHeld = held === i
+          const canJoin = reachable?.has(i) ?? false
+          return (
+            <g key={`hit-${i}`} className="node-hit">
+              {isHeld && (
+                <circle cx={p.x} cy={p.y} r={node * 2.4} className="node-held" fill="none" />
+              )}
+              {held !== null && canJoin && !isHeld && (
+                <circle cx={p.x} cy={p.y} r={node * 1.5} className="node-open" />
+              )}
+              {/* A target big enough for a finger, invisible but clickable. */}
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={Math.max(node * 3, rune.viewBox.size / 26)}
+                fill="transparent"
+                role="button"
+                tabIndex={0}
+                aria-label={
+                  held === null
+                    ? `Node ${i}. Pick a node to start a line.`
+                    : isHeld
+                      ? `Node ${i}, held. Pick it again to let go.`
+                      : canJoin
+                        ? `Join node ${held} to node ${i}.`
+                        : `Node ${i}. No attribute uses a line of that length.`
+                }
+                onClick={() => press(i)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    press(i)
+                  }
+                  if (e.key === 'Escape') onHold?.(null)
+                }}
+              />
+            </g>
+          )
+        })}
     </svg>
   )
 }

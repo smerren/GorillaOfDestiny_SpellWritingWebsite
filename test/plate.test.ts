@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest'
 
 import { ATTRIBUTES, DEFAULT_SIDES, type SpellAttributes } from '../src/lib/keys'
 import { GOLD, INK, layerInk, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../src/lib/palette'
+import { figureFromSpell } from '../src/lib/encoding'
 import { buildPlate, cellValue, plateToSvg } from '../src/lib/plate'
 import type { RuneStyle } from '../src/lib/rune'
 
@@ -35,6 +36,9 @@ const MISTY_STEP: SpellAttributes = {
   range: 'Self',
 }
 
+const FIG_FIREBALL = figureFromSpell(FIREBALL, DEFAULT_SIDES, ATTRIBUTES)
+const FIG_MISTY = figureFromSpell(MISTY_STEP, DEFAULT_SIDES, ATTRIBUTES)
+
 const PLAIN = {
   ink: INK,
   scaffoldInk: SCAFFOLD_INK,
@@ -46,12 +50,12 @@ const PLAIN = {
 
 describe('plate', () => {
   it('breaks the rune out into one cell per attribute, in reading order', () => {
-    const plate = buildPlate(FIREBALL, STYLE, 'Fireball')
+    const plate = buildPlate(FIG_FIREBALL, STYLE, 'Fireball')
     expect(plate.cells.map((c) => c.cell.attribute.id)).toEqual(ATTRIBUTES.map((a) => a.id))
   })
 
   it('gives each cell exactly the chords of its own layer', () => {
-    const plate = buildPlate(FIREBALL, STYLE, 'Fireball')
+    const plate = buildPlate(FIG_FIREBALL, STYLE, 'Fireball')
     for (const { cell, rune, groups } of plate.cells) {
       const layer = rune.layers.find((l) => l.attribute.id === cell.attribute.id)!
       expect(groups).toHaveLength(1)
@@ -60,19 +64,19 @@ describe('plate', () => {
   })
 
   it('accounts for every chord of the main figure across the cells', () => {
-    const plate = buildPlate(FIREBALL, STYLE, 'Fireball')
+    const plate = buildPlate(FIG_FIREBALL, STYLE, 'Fireball')
     const inMain = plate.main.groups.map((g) => [g.attribute.id, g.paths.length] as const)
     const inCells = plate.cells.map((c) => [c.cell.attribute.id, c.groups[0].paths.length] as const)
     expect(inMain).toEqual(inCells)
   })
 
   it('keeps the main figure tintable layer by layer', () => {
-    const plate = buildPlate(FIREBALL, STYLE, 'Fireball')
+    const plate = buildPlate(FIG_FIREBALL, STYLE, 'Fireball')
     expect(plate.main.groups.map((g) => g.attribute.id)).toEqual(ATTRIBUTES.map((a) => a.id))
   })
 
   it('draws nothing for an attribute the spell does not have', () => {
-    const plate = buildPlate(MISTY_STEP, STYLE, 'Misty Step')
+    const plate = buildPlate(FIG_MISTY, STYLE, 'Misty Step')
     const damage = plate.cells.find((c) => c.cell.attribute.id === 'damage')!
     expect(damage.groups[0].paths).toEqual([])
     // The nodes are still drawn, so the reader can see the layer is empty
@@ -90,7 +94,7 @@ describe('plate', () => {
   })
 
   it('writes a self-contained SVG with its own ground and credit', () => {
-    const svg = plateToSvg(buildPlate(FIREBALL, STYLE, 'Fireball'), PLAIN)
+    const svg = plateToSvg(buildPlate(FIG_FIREBALL, STYLE, 'Fireball'), PLAIN)
     expect(svg).toContain('<?xml version="1.0" encoding="UTF-8"?>')
     expect(svg).toContain('xmlns="http://www.w3.org/2000/svg"')
     expect(svg).toContain(`fill="${PARCHMENT}"`)
@@ -102,13 +106,13 @@ describe('plate', () => {
   })
 
   it('escapes a name that would otherwise break the markup', () => {
-    const svg = plateToSvg(buildPlate(FIREBALL, STYLE, '<script> & co'), PLAIN)
+    const svg = plateToSvg(buildPlate(FIG_FIREBALL, STYLE, '<script> & co'), PLAIN)
     expect(svg).toContain('&lt;SCRIPT&gt; &amp; CO')
     expect(svg).not.toContain('<script>')
   })
 
   it('tints every layer when asked', () => {
-    const svg = plateToSvg(buildPlate(FIREBALL, STYLE, 'Fireball'), {
+    const svg = plateToSvg(buildPlate(FIG_FIREBALL, STYLE, 'Fireball'), {
       ...PLAIN,
       tint: (a) => layerInk(a.k),
     })

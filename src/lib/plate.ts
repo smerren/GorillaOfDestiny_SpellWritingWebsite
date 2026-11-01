@@ -11,13 +11,13 @@
  */
 
 import type { Point } from './bases'
-import { encodeSpell } from './encoding'
-import { ATTRIBUTES, type Attribute, type SpellAttributes } from './keys'
+import type { Figure } from './encoding'
+import type { Attribute } from './keys'
 import { buildRune, fitTransform, type Rune, type RuneStyle } from './rune'
 
 export interface PlateCell {
   readonly attribute: Attribute
-  readonly feature: string
+  readonly feature: string | null
   readonly x: number
   readonly labelY: number
   readonly runeY: number
@@ -71,7 +71,8 @@ const VALUE_SPACE = 46
 const ROW_GAP = 16
 const FOOTER_SPACE = 54
 
-function layout(spell: SpellAttributes, attributes: readonly Attribute[]): PlateLayout {
+function layout(figure: Figure): PlateLayout {
+  const attributes = figure.attributes
   const available = WIDTH - MARGIN * 2
   const perRow = Math.max(1, Math.floor((available + CELL_GAP) / (MIN_CELL + CELL_GAP)))
   const columns = Math.max(1, Math.min(attributes.length || 1, perRow))
@@ -82,7 +83,8 @@ function layout(spell: SpellAttributes, attributes: readonly Attribute[]): Plate
   const rowHeight = LABEL_SPACE + size + VALUE_SPACE
   const gridTop = dividerY + 20
 
-  const cells = attributes.map((attribute, i) => {
+  const cells = figure.layers.map((layer, i) => {
+    const attribute = layer.attribute
     const row = Math.floor(i / columns)
     const column = i % columns
     // The last row may be short, so it is centred under the ones above.
@@ -93,7 +95,7 @@ function layout(spell: SpellAttributes, attributes: readonly Attribute[]): Plate
 
     return {
       attribute,
-      feature: spell[attribute.id] ?? attribute.features[0],
+      feature: layer.feature,
       x: left + column * (size + CELL_GAP),
       labelY: top + LABEL_SPACE - 8,
       runeY: top + LABEL_SPACE,
@@ -126,15 +128,10 @@ export function cellValue(attribute: Attribute, feature: string | null): string 
   return feature === 'None' || feature === 'Blank' ? '—' : feature
 }
 
-export function buildPlate(
-  spell: SpellAttributes,
-  style: RuneStyle,
-  title: string,
-  attributes: readonly Attribute[] = ATTRIBUTES,
-): Plate {
-  const plan = layout(spell, attributes)
+export function buildPlate(figure: Figure, style: RuneStyle, title: string): Plate {
+  const plan = layout(figure)
 
-  const mainRune = buildRune(spell, style, plan.main.size, attributes)
+  const mainRune = buildRune(figure, style, plan.main.size)
   const main: PlatePiece = {
     rune: mainRune,
     groups: mainRune.layers.map((l) => ({ attribute: l.attribute, paths: l.paths })),
@@ -144,7 +141,7 @@ export function buildPlate(
   // would read as noise rather than as context.
   const cellStyle: RuneStyle = { ...style, showScaffold: false }
   const cells = plan.cells.map((cell) => {
-    const rune = buildRune(spell, cellStyle, cell.size, attributes)
+    const rune = buildRune(figure, cellStyle, cell.size)
     const layer = rune.layers.find((l) => l.attribute.id === cell.attribute.id)
     return {
       cell,
@@ -266,8 +263,6 @@ export function plateToSvg(plate: Plate, colours: PlateInk): string {
 }
 
 /** The attributes a plate was written from, for the caption under the title. */
-export function plateSummary(spell: SpellAttributes, sides = 11): string {
-  return encodeSpell(spell, sides)
-    .map((l) => cellValue(l.attribute, l.feature))
-    .join(' · ')
+export function plateSummary(figure: Figure): string {
+  return figure.layers.map((l) => cellValue(l.attribute, l.feature)).join(' · ')
 }

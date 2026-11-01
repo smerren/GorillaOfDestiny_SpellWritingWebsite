@@ -11,7 +11,8 @@ import { describe, expect, it } from 'vitest'
 
 import { BASES, BASE_BY_ID, type Point } from '../src/lib/bases'
 import { chord, chordPath } from '../src/lib/connectors'
-import { DEFAULT_SIDES, type SpellAttributes } from '../src/lib/keys'
+import { ATTRIBUTES, DEFAULT_SIDES, type SpellAttributes } from '../src/lib/keys'
+import { figureFromSpell } from '../src/lib/encoding'
 import { betweenIndices, bowTarget, buildRune, type RuneStyle } from '../src/lib/rune'
 
 const N = DEFAULT_SIDES
@@ -25,6 +26,8 @@ const SPELL: SpellAttributes = {
   area: 'Sphere (60)',
   range: 'Touch',
 }
+
+const FIGURE = figureFromSpell(SPELL, N, ATTRIBUTES)
 
 const STYLE: RuneStyle = {
   base: 'polygon',
@@ -93,7 +96,7 @@ describe('connectors', () => {
         for (let i = 0; i < N; i++) {
           for (const k of [1, 2, 3, 4, 5]) {
             const j = (i + k) % N
-            const rune = buildRune(SPELL, { ...STYLE, base: base.id, curvature }, 100)
+            const rune = buildRune(FIGURE, { ...STYLE, base: base.id, curvature }, 100)
             const p = rune.nodes[i]
             const q = rune.nodes[j]
 
@@ -128,7 +131,7 @@ describe('connectors', () => {
     // The case that showed the old rule was wrong: the chord joining the two
     // ends of a quarter circle used to bow the same way the arc curves, so it
     // ran alongside the base instead of closing a readable shape against it.
-    const rune = buildRune(SPELL, { ...STYLE, base: 'quarter', curvature: 0.6 }, 100)
+    const rune = buildRune(FIGURE, { ...STYLE, base: 'quarter', curvature: 0.6 }, 100)
     const first = rune.nodes[0]
     const last = rune.nodes[N - 1]
 
@@ -202,7 +205,7 @@ describe('the frame', () => {
 
   it('keeps a polygon exactly its nominal size at every bow', () => {
     for (const curvature of bows) {
-      const rune = buildRune(SPELL, { ...STYLE, base: 'polygon', curvature }, 100)
+      const rune = buildRune(FIGURE, { ...STYLE, base: 'polygon', curvature }, 100)
       expect(rune.viewBox.size, `curvature ${curvature}`).toBeCloseTo(100, 6)
     }
   })
@@ -210,7 +213,7 @@ describe('the frame', () => {
   it('never shrinks a figure below its nominal size', () => {
     for (const base of BASES) {
       for (const curvature of bows) {
-        const rune = buildRune(SPELL, { ...STYLE, base: base.id, curvature }, 100)
+        const rune = buildRune(FIGURE, { ...STYLE, base: base.id, curvature }, 100)
         expect(rune.viewBox.size, `${base.id} ${curvature}`).toBeGreaterThanOrEqual(100 - 1e-6)
       }
     }
@@ -220,7 +223,7 @@ describe('the frame', () => {
     for (const base of BASES) {
       for (const curvature of bows) {
         const style = { ...STYLE, base: base.id, curvature, showScaffold: true }
-        const rune = buildRune(SPELL, style, 100)
+        const rune = buildRune(FIGURE, style, 100)
         const { x, y, size } = rune.viewBox
         for (let i = 0; i < N; i++) {
           for (const k of [1, 2, 3, 4, 5]) {
@@ -244,8 +247,8 @@ describe('the frame', () => {
   it('does not move when the scaffold is shown or hidden', () => {
     for (const base of BASES) {
       for (const curvature of bows) {
-        const on = buildRune(SPELL, { ...STYLE, base: base.id, curvature, showScaffold: true }, 100)
-        const off = buildRune(SPELL, { ...STYLE, base: base.id, curvature, showScaffold: false }, 100)
+        const on = buildRune(FIGURE, { ...STYLE, base: base.id, curvature, showScaffold: true }, 100)
+        const off = buildRune(FIGURE, { ...STYLE, base: base.id, curvature, showScaffold: false }, 100)
         expect(off.viewBox, `${base.id} ${curvature}`).toEqual(on.viewBox)
       }
     }

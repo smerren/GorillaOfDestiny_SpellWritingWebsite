@@ -139,6 +139,17 @@ This is also why `Base` carries a `closed` flag: on an open curve the chord from
 node to the first spans the whole figure rather than stepping across a gap, so which
 nodes count as "between" differs.
 
+## Drawing by hand
+
+Click a node to start a line and another to finish it; clicking the same pair again
+erases it. Only lengths some attribute is drawn with can be joined, and the nodes that
+would make a line are marked once one is held. The dropdowns still work and stay in step.
+
+This is why bits, not feature names, are the state a figure is kept in. A figure drawn by
+hand can land on a number that is cyclically unique but outside its attribute's list — a
+legible symbol that names nothing. The notation allows it, so the model does too: such a
+layer reads as *drawn by hand* rather than being snapped to the nearest word or refused.
+
 ## Forging a scheme
 
 The notation never required five attributes, or D&D's. The **Forge** tab takes any set of

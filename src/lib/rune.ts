@@ -5,8 +5,8 @@
 
 import { BASE_BY_ID, type BaseId, type Point } from './bases'
 import { chord, unionBox, type Box } from './connectors'
-import { encodeSpell, scaffoldChords, type Chord, type Layer } from './encoding'
-import type { Attribute, SpellAttributes } from './keys'
+import { scaffoldChords, type Chord, type Figure, type Layer } from './encoding'
+
 
 export interface RuneStyle {
   readonly base: BaseId
@@ -133,12 +133,8 @@ export function bowTarget(rune: Rune, closed: boolean, i: number, j: number): Po
   return bowTowards(rune.nodes, closed, i, j, rune.centre)
 }
 
-export function buildRune(
-  spell: SpellAttributes,
-  style: RuneStyle,
-  size = 100,
-  attributes?: readonly Attribute[],
-): Rune {
+export function buildRune(figure: Figure, style: RuneStyle, size = 100): Rune {
+  const attributes = figure.attributes
   const radius = (size / 2) * (1 - MARGIN)
   const mid = size / 2
 
@@ -162,10 +158,7 @@ export function buildRune(
     return drawn.d
   }
 
-  const layers = encodeSpell(spell, style.sides, attributes).map((layer) => ({
-    ...layer,
-    paths: layer.chords.map(draw),
-  }))
+  const layers = figure.layers.map((layer) => ({ ...layer, paths: layer.chords.map(draw) }))
 
   const scaffold = style.showScaffold ? scaffoldChords(style.sides, attributes).map(draw) : []
 

@@ -680,3 +680,49 @@ textarea {
   background: rgba(139, 0, 0, 0.07);
   border-left: 2px solid var(--ink);
 }
+
+/* ---------- drawing by hand ---------- */
+
+.rune.drawable .node-hit circle[role="button"] {
+  cursor: pointer;
+  outline: none;
+}
+
+.rune.drawable .node-hit circle[role="button"]:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 0;
+  rx: 3;
+}
+
+.node-held {
+  stroke: var(--ink);
+  stroke-width: 0.9;
+  opacity: 0.85;
+}
+
+.node-open {
+  fill: var(--gold);
+  opacity: 0.45;
+}
+
+.rune.drawable .node-hit:hover .node-open {
+  opacity: 0.9;
+}
+
+.readout .unnamed {
+  color: var(--text-soft);
+  font-style: italic;
+}
+
+.draw-hint {
+  margin: 0.6rem 0 0;
+  font-size: 0.84rem;
+  color: var(--text-soft);
+  text-align: center;
+  min-height: 1.3em;
+}
+
+.draw-hint strong {
+  color: #4a2a18;
+  font-weight: 500;
+}
