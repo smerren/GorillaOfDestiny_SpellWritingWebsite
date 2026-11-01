@@ -814,3 +814,10 @@ button.link:hover {
   font-size: 0.68rem;
   margin-left: auto;
 }
+
+.readout-note {
+  margin: 0.75rem 0 0;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--rule);
+  font-size: 0.82rem;
+}

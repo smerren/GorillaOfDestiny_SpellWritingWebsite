@@ -28,14 +28,14 @@ export function StylePanel({
 
   return (
     <section className="panel">
-      <h2>Hand</h2>
+      <h2>Style</h2>
       <p className="hint">
-        The rules fix which nodes join, never how. Base and line style are where a caster shows
-        their own hand.
+        The system decides <em>which</em> dots get joined. How you draw them is yours — this
+        is where one caster's handwriting differs from another's.
       </p>
 
       <label className="field">
-        <span>Base</span>
+        <span>Where the dots sit</span>
         <select value={style.base} onChange={(e) => onStyle({ base: e.target.value as never })}>
           {BASES.map((base) => (
             <option key={base.id} value={base.id}>
@@ -47,7 +47,7 @@ export function StylePanel({
       </label>
 
       <label className="field">
-        <span>Connections</span>
+        <span>How they join</span>
         <select value={connector} onChange={(e) => onConnector(e.target.value)}>
           {CONNECTORS.map((c) => (
             <option key={c.id} value={c.id}>
@@ -61,7 +61,7 @@ export function StylePanel({
       {curved && (
         <label className="field">
           <span>
-            Bow <code className="inline">{style.curvature.toFixed(2)}</code>
+            How far they bend <code className="inline">{style.curvature.toFixed(2)}</code>
           </span>
           <input
             type="range"
@@ -72,8 +72,7 @@ export function StylePanel({
             onChange={(e) => onStyle({ curvature: Number(e.target.value) })}
           />
           <small>
-            How far each arc bows off its chord. At 1.00 the circle is centred on the two nodes;
-            below that it is a non-centred circle, and the arc stays inside the figure.
+            At 1.00 each line swells into a half circle. Lower values bend it more gently.
           </small>
         </label>
       )}
@@ -86,7 +85,7 @@ export function StylePanel({
             checked={style.showScaffold}
             onChange={(e) => onStyle({ showScaffold: e.target.checked })}
           />
-          Scaffold of every possible chord
+          Guide lines
         </label>
         <label>
           <input
@@ -94,7 +93,7 @@ export function StylePanel({
             checked={style.showNodes}
             onChange={(e) => onStyle({ showNodes: e.target.checked })}
           />
-          Nodes
+          The dots themselves
         </label>
         <label>
           <input
@@ -102,8 +101,11 @@ export function StylePanel({
             checked={style.showStartNode}
             onChange={(e) => onStyle({ showStartNode: e.target.checked })}
           />
-          Start node
+          The filled dot, which marks where reading begins
         </label>
+        <small>
+          Guide lines show every line the shape could carry, faintly, behind the spell.
+        </small>
       </fieldset>
 
       <fieldset className="toggles">
@@ -114,11 +116,14 @@ export function StylePanel({
             checked={tintByAttribute}
             onChange={(e) => onTint(e.target.checked)}
           />
-          A colour per attribute
+          Give each attribute its own colour
         </label>
 
         {tintByAttribute ? (
-          <small>Each layer takes its own colour, so a reader can follow one attribute.</small>
+          <small>
+            Makes a crowded rune easier to read: every line of one colour belongs to the same
+            attribute.
+          </small>
         ) : (
           <div className="ink-pick">
             <div className="swatches">

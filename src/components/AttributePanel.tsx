@@ -40,8 +40,9 @@ export function AttributePanel({
     <section className="panel">
       <h2>Attributes</h2>
       <p className="hint">
-        Each attribute is drawn with chords of its own length <em>k</em>, so the layers stack
-        without ever sharing an edge.
+        What the spell <em>is</em>. Each attribute is drawn with its own length of line, so
+        the layers sit on top of one another without ever using the same line twice — which
+        is what lets a reader take them apart again.
       </p>
 
       <div className="attributes">
@@ -64,21 +65,23 @@ export function AttributePanel({
                   aria-hidden="true"
                 />
                 <span className="attribute-label">{attribute.label}</span>
-                <span className="k">k = {attribute.k}</span>
+                <span className="k" title={`Drawn with lines ${attribute.k} dots long`}>
+                  k = {attribute.k}
+                </span>
               </span>
 
               <select
                 value={bits}
                 onChange={(e) => onChoose(attribute.id, e.target.value)}
               >
-                {unnamed && <option value={bits}>Drawn by hand — unnamed</option>}
+                {unnamed && <option value={bits}>Drawn by hand — not named yet</option>}
                 {attribute.features.map((option) => (
                   <option key={option} value={bitsFor(attribute, option, figure.sides)}>
                     {attribute.id === 'level' && option === '0' ? '0 (cantrip)' : option}
                   </option>
                 ))}
                 {mine.length > 0 && (
-                  <optgroup label="Kept by you">
+                  <optgroup label="Shapes you named">
                     {mine.map((entry) => (
                       <option key={entry.bits} value={entry.bits}>
                         {entry.name}
@@ -97,8 +100,8 @@ export function AttributePanel({
                       type="text"
                       value={draft}
                       autoFocus
-                      placeholder="Name this symbol"
-                      aria-label={`Name for the symbol drawn on ${attribute.label}`}
+                      placeholder="What do you call it?"
+                      aria-label={`Name for the shape drawn on ${attribute.label}`}
                       onChange={(e) => setDraft(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -131,18 +134,18 @@ export function AttributePanel({
                         setNaming(null)
                       }}
                     >
-                      Keep
+                      Save
                     </button>
                   </span>
                 ) : (
                   <button type="button" className="link" onClick={() => begin(attribute.id)}>
-                    Name this symbol…
+                    Name this shape and keep it…
                   </button>
                 ))}
 
               {givenName !== null && (
                 <span className="named-note">
-                  Yours: <strong>{givenName}</strong>
+                  You named this <strong>{givenName}</strong>
                   <button
                     type="button"
                     className="link"

@@ -136,7 +136,7 @@ export function problems(draft: Draft): Problem[] {
       attributeId: null,
       message:
         `${draft.attributes.length} attributes need at least ` +
-        `${minimumSides(draft.attributes.length)} nodes. On ${sides}, two of them would ` +
+        `${minimumSides(draft.attributes.length)} dots. On ${sides}, two of them would ` +
         'have to be drawn with the same lines, and the rune could not be read back.',
     })
   }
@@ -154,8 +154,8 @@ export function problems(draft: Draft): Problem[] {
       out.push({
         attributeId: attribute.id,
         message:
-          `${sides} nodes hold ${capacityOf(sides)} features, and this has ` +
-          `${features.length}. Remove some, or give the scheme more nodes.`,
+          `${sides} dots hold ${capacityOf(sides)} features, and this has ` +
+          `${features.length}. Remove some, or give the scheme more dots.`,
       })
     }
     if (i + 1 > halfway) {

@@ -129,12 +129,12 @@ export function RuneView({
                 tabIndex={0}
                 aria-label={
                   held === null
-                    ? `Node ${i}. Pick a node to start a line.`
+                    ? `Dot ${i}. Click to start a line.`
                     : isHeld
-                      ? `Node ${i}, held. Pick it again to let go.`
+                      ? `Dot ${i}, held. Click again to let go.`
                       : canJoin
-                        ? `Join node ${held} to node ${i}.`
-                        : `Node ${i}. No attribute uses a line of that length.`
+                        ? `Join dot ${held} to dot ${i}.`
+                        : `Dot ${i}. No attribute is drawn with a line that long.`
                 }
                 onClick={() => press(i)}
                 onKeyDown={(e) => {

@@ -132,9 +132,9 @@ export function App() {
       <header className="masthead">
         <h1>Spell Writing</h1>
         <p className="standfirst">
-          A scribing table for the notation set out in <em>The Spell Writing Guide</em> by the
-          Gorilla of Destiny. Choose what a spell <em>is</em>, and read back the shape it is
-          written as.
+          Write a spell as a rune. Say what the spell does and its shape follows; or join the
+          dots yourself and read back what you have written. The notation is the Gorilla of
+          Destiny's, from <em>The Spell Writing Guide</em>.
         </p>
 
         <nav className="tabs" role="tablist" aria-label="Scheme">
@@ -145,7 +145,7 @@ export function App() {
             className={tab === 'scribe' ? 'on' : undefined}
             onClick={() => setTab('scribe')}
           >
-            Dungeons &amp; Dragons 5e
+            D&amp;D 5e spells
           </button>
           <button
             type="button"
@@ -154,7 +154,7 @@ export function App() {
             className={tab === 'forge' ? 'on' : undefined}
             onClick={() => setTab('forge')}
           >
-            Forge your own
+            Invent your own system
           </button>
         </nav>
       </header>

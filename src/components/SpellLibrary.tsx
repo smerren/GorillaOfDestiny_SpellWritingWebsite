@@ -50,7 +50,8 @@ export function SpellLibrary({ current, onPick }: Props) {
     <section className="panel">
       <h2>Spellbook</h2>
       <p className="hint">
-        {LIBRARY.length} spells from the SRD, as written in the 2024 dictionary.
+        All {LIBRARY.length} spells of the 5e SRD, drawn exactly as the Gorilla of Destiny's
+        2024 dictionary draws them. Pick one to load it.
       </p>
 
       <input

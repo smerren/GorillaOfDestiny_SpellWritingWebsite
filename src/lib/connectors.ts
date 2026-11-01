@@ -26,14 +26,14 @@ export interface Connector {
 export const CONNECTORS: readonly Connector[] = [
   {
     id: 'straight',
-    label: 'Straight lines',
-    description: 'The default of the published dictionaries.',
+    label: 'Straight',
+    description: 'Plain straight lines. What the published dictionaries use.',
     curved: false,
   },
   {
     id: 'arc',
-    label: 'Circular arcs',
-    description: 'Centred circles at 1.00; anything else is a non-centred circle.',
+    label: 'Curved',
+    description: 'Lines that bend. Set how far with the slider below.',
     curved: true,
   },
 ]

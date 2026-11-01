@@ -143,7 +143,7 @@ describe('warnings', () => {
 
   it('catches a base too small for the attributes, where layers would collide', () => {
     const faults = problems(draft([['A', 'x'], ['B', 'y'], ['C', 'z']], 5))
-    expect(faults.some((p) => /at least 7 nodes/.test(p.message))).toBe(true)
+    expect(faults.some((p) => /at least 7 dots/.test(p.message))).toBe(true)
   })
 
   it('is quiet about a scheme that is fine', () => {

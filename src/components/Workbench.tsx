@@ -131,7 +131,7 @@ export function Workbench({
             className={view === 'rune' ? 'on' : undefined}
             onClick={() => setView('rune')}
           >
-            Rune
+            Rune alone
           </button>
           <button
             type="button"
@@ -140,7 +140,7 @@ export function Workbench({
             className={view === 'plate' ? 'on' : undefined}
             onClick={() => setView('plate')}
           >
-            Spellbook plate
+            Spellbook page
           </button>
         </div>
 
@@ -169,10 +169,11 @@ export function Workbench({
             {view === 'rune' && (
               <p className="draw-hint">
                 {held === null ? (
-                  <>Click a node to begin a line, or set an attribute below.</>
+                  <>Click any dot to start a line — or choose attributes on the right.</>
                 ) : (
                   <>
-                    Now click another node to draw or erase. <strong>Esc</strong> to let go.
+                    Now click a second dot. Clicking the same pair again rubs the line out.{' '}
+                    <strong>Esc</strong> to cancel.
                   </>
                 )}
               </p>
@@ -188,9 +189,9 @@ export function Workbench({
         </figure>
 
         <div className="readout">
-          <h2>Reading</h2>
+          <h2>What this rune says</h2>
           {layers.length === 0 ? (
-            <p className="hint">Nothing to read yet.</p>
+            <p className="hint">Nothing to read yet — add an attribute to the scheme.</p>
           ) : (
             <table>
               <tbody>
@@ -216,13 +217,20 @@ export function Workbench({
                     </td>
                     <td className="count">
                       {layer.chords.length === 0
-                        ? 'no lines'
+                        ? 'nothing drawn'
                         : `${layer.chords.length} line${layer.chords.length > 1 ? 's' : ''}`}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          )}
+
+          {layers.length > 0 && (
+            <p className="hint readout-note">
+              Each row is one attribute. The digits are which of its dots start a line — this
+              is the number the guide's dictionaries list beside every symbol.
+            </p>
           )}
 
           <div className="actions">
@@ -249,7 +257,7 @@ export function Workbench({
                 onTitle(null)
               }}
             >
-              Clear
+              Start again
             </button>
           </div>
         </div>

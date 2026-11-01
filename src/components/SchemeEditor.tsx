@@ -69,7 +69,7 @@ export function SchemeEditor({ draft, scheme, onDraft, onForget, onReset }: Prop
       </label>
 
       <label className="field">
-        <span>Nodes</span>
+        <span>Dots</span>
         <select
           value={draft.sides ?? 'auto'}
           onChange={(e) =>
@@ -81,12 +81,12 @@ export function SchemeEditor({ draft, scheme, onDraft, onForget, onReset }: Prop
           </option>
           {Array.from({ length: MAX_SIDES - 2 }, (_, i) => i + 3).map((n) => (
             <option key={n} value={n}>
-              {n} nodes — room for {capacityOf(n)} features each
+              {n} dots — room for {capacityOf(n)} features each
             </option>
           ))}
         </select>
         <small>
-          {sides} nodes give {uniqueCount(sides)} shapes that cannot be mistaken for one
+          {sides} dots give {uniqueCount(sides)} shapes that cannot be mistaken for one
           another when turned. One is the blank, leaving room for {capacityOf(sides)} features
           in each attribute.
         </small>
@@ -119,7 +119,9 @@ export function SchemeEditor({ draft, scheme, onDraft, onForget, onReset }: Prop
                   aria-label={`Name of attribute ${i + 1}`}
                   onChange={(e) => patch(attribute.id, { label: e.target.value })}
                 />
-                <span className="k">k = {i + 1}</span>
+                <span className="k" title={`Drawn with lines ${i + 1} dots long`}>
+                  k = {i + 1}
+                </span>
               </div>
 
               <textarea
