@@ -150,6 +150,21 @@ hand can land on a number that is cyclically unique but outside its attribute's 
 legible symbol that names nothing. The notation allows it, so the model does too: such a
 layer reads as *drawn by hand* rather than being snapped to the nearest word or refused.
 
+### Naming what you drew
+
+An unnamed symbol can be given a name and kept. It then appears in that attribute's
+dropdown under *Named by you*, and is read back by name wherever it is drawn again.
+
+**A name is an overlay keyed by the bits, never an extra entry in the attribute's feature
+list.** Position in that list *is* the symbol, so appending to it would hand the new name
+somebody else's shape and silently rewrite every rune after it — which is the same trap
+as reordering a list, and the tests guard it.
+
+Names are held per attribute, per scheme and per node count, because a shape drawn on a
+7-gon is not the same shape on a 9-gon. A name never shadows a feature the attribute
+already has. They live in browser storage, which is per-viewer and can fail outright in a
+private window, costing the saved names and nothing else.
+
 ## Forging a scheme
 
 The notation never required five attributes, or D&D's. The **Forge** tab takes any set of

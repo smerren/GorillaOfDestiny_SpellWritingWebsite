@@ -726,3 +726,62 @@ textarea {
   color: #4a2a18;
   font-weight: 500;
 }
+
+/* ---------- naming a drawn symbol ---------- */
+
+button.link {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 0.82rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #6d4b1f;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  justify-self: start;
+}
+
+button.link:hover {
+  background: none;
+  color: var(--ink);
+}
+
+.naming {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.naming input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  padding: 0.22rem 0.4rem;
+  font-size: 0.9rem;
+}
+
+.naming button {
+  padding: 0.28rem 0.55rem;
+  font-size: 0.66rem;
+}
+
+.naming button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.named-note {
+  display: flex;
+  gap: 0.45rem;
+  align-items: baseline;
+  font-size: 0.82rem;
+  color: var(--text-soft);
+}
+
+.named-note strong {
+  color: #4a2a18;
+  font-weight: 500;
+  font-style: italic;
+}

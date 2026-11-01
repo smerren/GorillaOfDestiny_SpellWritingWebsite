@@ -6,6 +6,14 @@ import { Workbench } from './components/Workbench'
 import { bitsOf, emptyBits, figureFromSpell, type Bits } from './lib/encoding'
 import { EMPTY_SPELL } from './lib/keys'
 import {
+  forget,
+  loadNames,
+  remember,
+  saveNames,
+  type NamedLibrary,
+  type NamedSymbol,
+} from './lib/named'
+import {
   compile,
   FIVE_E,
   loadDraft,
@@ -16,8 +24,26 @@ import {
 
 type Tab = 'scribe' | 'forge'
 
+/** Symbols the author has named, kept across visits. */
+function useNamedSymbols() {
+  const [named, setNamed] = useState<NamedLibrary>(() => loadNames())
+
+  useEffect(() => {
+    saveNames(named)
+  }, [named])
+
+  const onRemember = useCallback(
+    (entry: NamedSymbol) => setNamed((all) => remember(all, entry)),
+    [],
+  )
+  const onForget = useCallback((entry: NamedSymbol) => setNamed((all) => forget(all, entry)), [])
+
+  return { named, onRemember, onForget }
+}
+
 /** The 5e dictionary: a fixed scheme with a spellbook to draw from. */
 function Scribe() {
+  const { named, onRemember, onForget } = useNamedSymbols()
   const [bits, setBits] = useState<Bits>(() =>
     bitsOf(figureFromSpell(EMPTY_SPELL, FIVE_E.sides, FIVE_E.attributes)),
   )
@@ -36,7 +62,16 @@ function Scribe() {
   }, [])
 
   return (
-    <Workbench scheme={FIVE_E} bits={bits} onBits={change} title={name} onTitle={setName}>
+    <Workbench
+      scheme={FIVE_E}
+      bits={bits}
+      onBits={change}
+      named={named}
+      onRemember={onRemember}
+      onForget={onForget}
+      title={name}
+      onTitle={setName}
+    >
       <SpellLibrary current={name} onPick={pick} />
     </Workbench>
   )
@@ -44,6 +79,7 @@ function Scribe() {
 
 /** A scheme of the author's own making. */
 function Forge() {
+  const { named, onRemember, onForget } = useNamedSymbols()
   const [draft, setDraft] = useState<Draft>(() => loadDraft() ?? STARTER)
   const [drawn, setDrawn] = useState<Bits>({})
   const [name, setName] = useState<string | null>(null)
@@ -67,7 +103,16 @@ function Forge() {
   }, [scheme, drawn])
 
   return (
-    <Workbench scheme={scheme} bits={bits} onBits={setDrawn} title={name} onTitle={setName}>
+    <Workbench
+      scheme={scheme}
+      bits={bits}
+      onBits={setDrawn}
+      named={named}
+      onRemember={onRemember}
+      onForget={onForget}
+      title={name}
+      onTitle={setName}
+    >
       <SchemeEditor draft={draft} onDraft={setDraft} onReset={() => setDraft(STARTER)} />
     </Workbench>
   )

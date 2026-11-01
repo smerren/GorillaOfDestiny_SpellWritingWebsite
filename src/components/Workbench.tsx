@@ -5,14 +5,9 @@ import { PlateView } from './PlateView'
 import { RuneView } from './RuneView'
 import { StylePanel } from './StylePanel'
 import { downloadPng, downloadText, slug } from '../lib/download'
-import {
-  bitsFor,
-  emptyBits,
-  figureFromBits,
-  toggleChord,
-  type Bits,
-} from '../lib/encoding'
+import { emptyBits, figureFromBits, labelOf, toggleChord, type Bits } from '../lib/encoding'
 import type { AttributeId } from '../lib/keys'
+import { resolver, type NamedLibrary, type NamedSymbol } from '../lib/named'
 import { GOLD, layerInk, INK, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../lib/palette'
 import { buildPlate, plateToSvg } from '../lib/plate'
 import { buildRune, runeToSvg, type RuneStyle } from '../lib/rune'
@@ -26,6 +21,10 @@ interface Props {
    */
   bits: Bits
   onBits: (next: Bits) => void
+  /** Symbols the author has named, and the ways to add to them. */
+  named: NamedLibrary
+  onRemember: (entry: NamedSymbol) => void
+  onForget: (entry: NamedSymbol) => void
   title: string | null
   onTitle: (next: string | null) => void
   /** Extra control panels for this tab: a spellbook, a scheme editor. */
@@ -34,7 +33,17 @@ interface Props {
 
 type View = 'rune' | 'plate'
 
-export function Workbench({ scheme, bits, onBits, title, onTitle, children }: Props) {
+export function Workbench({
+  scheme,
+  bits,
+  onBits,
+  named,
+  onRemember,
+  onForget,
+  title,
+  onTitle,
+  children,
+}: Props) {
   const [base, setBase] = useState<RuneStyle['base']>('polygon')
   const [curvature, setCurvature] = useState(0)
   const [showScaffold, setScaffold] = useState(true)
@@ -74,17 +83,19 @@ export function Workbench({ scheme, bits, onBits, title, onTitle, children }: Pr
   }, [])
 
   const figure = useMemo(
-    () => figureFromBits(bits, scheme.sides, scheme.attributes),
-    [bits, scheme],
+    () =>
+      figureFromBits(
+        bits,
+        scheme.sides,
+        scheme.attributes,
+        resolver(named, scheme.id, scheme.sides),
+      ),
+    [bits, scheme, named],
   )
 
-  const setAttribute = useCallback(
-    (id: AttributeId, feature: string) => {
-      const attribute = scheme.attributes.find((a) => a.id === id)
-      if (!attribute || feature === '') return
-      onBits({ ...bits, [id]: bitsFor(attribute, feature, scheme.sides) })
-    },
-    [bits, onBits, scheme],
+  const choose = useCallback(
+    (id: AttributeId, chosen: string) => onBits({ ...bits, [id]: chosen }),
+    [bits, onBits],
   )
 
   const toggle = useCallback(
@@ -206,7 +217,7 @@ export function Workbench({ scheme, bits, onBits, title, onTitle, children }: Pr
                       {layer.attribute.label}
                     </th>
                     <td className="feature">
-                      {layer.feature ?? <span className="unnamed">drawn by hand</span>}
+                      {labelOf(layer) ?? <span className="unnamed">drawn by hand</span>}
                     </td>
                     <td>
                       <code>{layer.bits}</code>
@@ -255,9 +266,13 @@ export function Workbench({ scheme, bits, onBits, title, onTitle, children }: Pr
       <aside className="controls">
         <AttributePanel
           figure={figure}
+          schemeId={scheme.id}
+          named={named}
           tintByAttribute={tintByAttribute}
           ink={ink}
-          onChange={setAttribute}
+          onChoose={choose}
+          onRemember={onRemember}
+          onForget={onForget}
           onFocus={setFocus}
         />
         <StylePanel

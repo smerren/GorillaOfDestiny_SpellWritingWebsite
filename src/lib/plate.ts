@@ -11,7 +11,7 @@
  */
 
 import type { Point } from './bases'
-import type { Figure } from './encoding'
+import { labelOf, type Figure } from './encoding'
 import type { Attribute } from './keys'
 import { buildRune, fitTransform, type Rune, type RuneStyle } from './rune'
 
@@ -95,7 +95,7 @@ function layout(figure: Figure): PlateLayout {
 
     return {
       attribute,
-      feature: layer.feature,
+      feature: labelOf(layer),
       x: left + column * (size + CELL_GAP),
       labelY: top + LABEL_SPACE - 8,
       runeY: top + LABEL_SPACE,

@@ -26,9 +26,19 @@ export interface Layer {
    * allows it, so the model does too.
    */
   readonly feature: string | null
+  /** A name the author gave these bits, when the list has no word for them. */
+  readonly named: string | null
   readonly bits: string
   readonly chords: readonly Chord[]
 }
+
+/** Whatever this layer should be called, if anything. */
+export function labelOf(layer: Layer): string | null {
+  return layer.feature ?? layer.named
+}
+
+/** Looks up a name for an attribute's bits. */
+export type NameResolver = (attributeId: string, bits: string) => string | null
 
 /** A whole figure: what is drawn, on how many nodes, under which attributes. */
 export interface Figure {
@@ -44,13 +54,16 @@ export function figureFromBits(
   bits: Bits,
   sides: number,
   attributes: readonly Attribute[] = ATTRIBUTES,
+  named?: NameResolver,
 ): Figure {
   const layers = attributes.map((attribute) => {
     const written = bits[attribute.id] ?? '0'.repeat(sides)
     const padded = written.length === sides ? written : '0'.repeat(sides)
+    const feature = decodeBits(attribute, padded, sides)
     return {
       attribute,
-      feature: decodeBits(attribute, padded, sides),
+      feature,
+      named: feature === null ? (named?.(attribute.id, padded) ?? null) : null,
       bits: padded,
       chords: chordsFor(attribute, padded, sides),
     }
@@ -138,7 +151,7 @@ export function encodeSpell(
   return attributes.map((attribute) => {
     const feature = spell[attribute.id] ?? attribute.features[0]
     const bits = bitsFor(attribute, feature, sides)
-    return { attribute, feature, bits, chords: chordsFor(attribute, bits, sides) }
+    return { attribute, feature, named: null, bits, chords: chordsFor(attribute, bits, sides) }
   })
 }
 
