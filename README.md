@@ -139,6 +139,24 @@ This is also why `Base` carries a `closed` flag: on an open curve the chord from
 node to the first spans the whole figure rather than stepping across a gap, so which
 nodes count as "between" differs.
 
+## Two spellbooks
+
+The **Spellbook** tab holds two of them. *Your spellbook* is what you have written or
+copied; *the 5e spellbook* is the 319 published SRD spells, which you can open or star.
+Starring copies a spell into yours.
+
+A kept spell stores **the lines**, not a list of chosen features — the same reason a
+figure does. A spell drawn by hand can say something no feature names, and a copied
+favourite then survives you later renaming the shapes it was written with.
+
+Whether the rune on the table is already kept is decided by comparing its lines, not its
+name, so changing one line makes it a new spell to be named. A layer that draws nothing
+and a layer that was never stored count as the same spell.
+
+Spells are kept per scheme and per dot count, because the same lines drawn under a
+different scheme are a different spell. The Forge therefore has its own spellbook for
+whatever system you invent there.
+
 ## Drawing by hand
 
 Click a node to start a line and another to finish it; clicking the same pair again

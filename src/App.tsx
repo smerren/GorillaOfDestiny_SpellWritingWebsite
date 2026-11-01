@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { SchemeEditor } from './components/SchemeEditor'
 import { SpellLibrary, type LibrarySpell } from './components/SpellLibrary'
+import { SpellbookPanel } from './components/SpellbookPanel'
 import { Workbench } from './components/Workbench'
 import { bitsOf, emptyBits, figureFromSpell, type Bits } from './lib/encoding'
 import { EMPTY_SPELL } from './lib/keys'
@@ -14,6 +15,19 @@ import {
   type NamedSymbol,
 } from './lib/named'
 import {
+  dictionaryId,
+  drop,
+  findByShape,
+  keep,
+  loadSpellbook,
+  newSpellId,
+  rename,
+  saveSpellbook,
+  spellsFor,
+  type SavedSpell,
+  type Spellbook,
+} from './lib/spellbook'
+import {
   compile,
   FIVE_E,
   loadDraft,
@@ -24,6 +38,25 @@ import {
 } from './lib/scheme'
 
 type Tab = 'scribe' | 'forge'
+
+/** Spells the author has kept, across visits. */
+function useSpellbook() {
+  const [book, setBook] = useState<Spellbook>(() => loadSpellbook())
+
+  useEffect(() => {
+    saveSpellbook(book)
+  }, [book])
+
+  return {
+    book,
+    onKeep: useCallback((spell: SavedSpell) => setBook((all) => keep(all, spell)), []),
+    onDrop: useCallback((id: string) => setBook((all) => drop(all, id)), []),
+    onRename: useCallback(
+      (id: string, name: string) => setBook((all) => rename(all, id, name)),
+      [],
+    ),
+  }
+}
 
 /** Symbols the author has named, kept across visits. */
 function useNamedSymbols() {
@@ -43,24 +76,71 @@ function useNamedSymbols() {
 }
 
 /** The 5e dictionary: a fixed scheme with a spellbook to draw from. */
+/** Lines for a spell out of the published dictionary. */
+function dictionaryBits(spell: LibrarySpell): Bits {
+  const { name: _name, ...attributes } = spell
+  return bitsOf(figureFromSpell(attributes, FIVE_E.sides, FIVE_E.attributes))
+}
+
 function Scribe() {
   const { named, onRemember, onForget } = useNamedSymbols()
+  const { book, onKeep, onDrop, onRename } = useSpellbook()
   const scheme = useMemo(() => withKept(FIVE_E, named), [named])
+
   const [bits, setBits] = useState<Bits>(() =>
     bitsOf(figureFromSpell(EMPTY_SPELL, FIVE_E.sides, FIVE_E.attributes)),
   )
   const [name, setName] = useState<string | null>(null)
 
   const pick = useCallback((picked: LibrarySpell) => {
-    const { name: picked_name, ...attributes } = picked
-    setBits(bitsOf(figureFromSpell(attributes, FIVE_E.sides, FIVE_E.attributes)))
-    setName(picked_name)
+    setBits(dictionaryBits(picked))
+    setName(picked.name)
   }, [])
 
   const change = useCallback((next: Bits) => {
     setBits(next)
-    // Once a line is altered this is no longer the spell from the book.
+    // Once a line is altered this is no longer the spell it was opened as.
     setName(null)
+  }, [])
+
+  // Which dictionary spells have been copied in, so the stars can show it.
+  const favourites = useMemo(
+    () =>
+      new Set(
+        spellsFor(book, scheme.id, scheme.sides)
+          .filter((s) => s.fromDictionary)
+          .map((s) => s.name),
+      ),
+    [book, scheme],
+  )
+
+  const current = useMemo(
+    () => findByShape(book, scheme.id, scheme.sides, bits),
+    [book, scheme, bits],
+  )
+
+  const favourite = useCallback(
+    (spell: LibrarySpell, on: boolean) => {
+      const id = dictionaryId(scheme.id, spell.name)
+      if (!on) {
+        onDrop(id)
+        return
+      }
+      onKeep({
+        id,
+        scheme: scheme.id,
+        sides: scheme.sides,
+        name: spell.name,
+        bits: dictionaryBits(spell),
+        fromDictionary: true,
+      })
+    },
+    [scheme, onKeep, onDrop],
+  )
+
+  const open = useCallback((spell: SavedSpell) => {
+    setBits(spell.bits)
+    setName(spell.name)
   }, [])
 
   return (
@@ -73,7 +153,27 @@ function Scribe() {
       title={name}
       onTitle={setName}
     >
-      <SpellLibrary current={name} onPick={pick} />
+      <SpellbookPanel
+        book={book}
+        scheme={scheme.id}
+        sides={scheme.sides}
+        current={current}
+        title={name}
+        onOpen={open}
+        onKeep={(spellName) => {
+          const id = newSpellId()
+          onKeep({ id, scheme: scheme.id, sides: scheme.sides, name: spellName, bits })
+          setName(spellName)
+        }}
+        onRename={onRename}
+        onDrop={onDrop}
+      />
+      <SpellLibrary
+        current={name}
+        favourites={favourites}
+        onPick={pick}
+        onFavourite={favourite}
+      />
     </Workbench>
   )
 }
@@ -81,6 +181,7 @@ function Scribe() {
 /** A scheme of the author's own making. */
 function Forge() {
   const { named, onRemember, onForget } = useNamedSymbols()
+  const { book, onKeep, onDrop, onRename } = useSpellbook()
   const [draft, setDraft] = useState<Draft>(() => loadDraft() ?? STARTER)
   const [drawn, setDrawn] = useState<Bits>({})
   const [name, setName] = useState<string | null>(null)
@@ -103,6 +204,11 @@ function Forge() {
     return out
   }, [scheme, drawn])
 
+  const current = useMemo(
+    () => findByShape(book, scheme.id, scheme.sides, bits),
+    [book, scheme, bits],
+  )
+
   return (
     <Workbench
       scheme={scheme}
@@ -113,6 +219,29 @@ function Forge() {
       title={name}
       onTitle={setName}
     >
+      <SpellbookPanel
+        book={book}
+        scheme={scheme.id}
+        sides={scheme.sides}
+        current={current}
+        title={name}
+        onOpen={(spell) => {
+          setDrawn(spell.bits)
+          setName(spell.name)
+        }}
+        onKeep={(spellName) => {
+          onKeep({
+            id: newSpellId(),
+            scheme: scheme.id,
+            sides: scheme.sides,
+            name: spellName,
+            bits,
+          })
+          setName(spellName)
+        }}
+        onRename={onRename}
+        onDrop={onDrop}
+      />
       <SchemeEditor
         draft={draft}
         scheme={scheme}
@@ -145,7 +274,7 @@ export function App() {
             className={tab === 'scribe' ? 'on' : undefined}
             onClick={() => setTab('scribe')}
           >
-            D&amp;D 5e spells
+            Spellbook
           </button>
           <button
             type="button"
