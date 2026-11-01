@@ -8,7 +8,13 @@
  * every rune. The leading "None"/"Blank" sits at index 0 and draws nothing.
  */
 
-export type AttributeId = 'level' | 'school' | 'damage' | 'area' | 'range'
+/**
+ * Attributes are identified by a plain string, because a scheme of the
+ * author's own making invents its own. The five below are the built-in set.
+ */
+export type AttributeId = string
+
+export type FiveEAttributeId = 'level' | 'school' | 'damage' | 'area' | 'range'
 
 export interface Attribute {
   readonly id: AttributeId
@@ -124,12 +130,13 @@ export const ATTRIBUTES: readonly Attribute[] = [
 
 export const ATTRIBUTE_BY_ID = Object.fromEntries(
   ATTRIBUTES.map((a) => [a.id, a]),
-) as Record<AttributeId, Attribute>
+) as Record<FiveEAttributeId, Attribute>
 
 /** The 11-gon the guide recommends for these five attributes. */
 export const DEFAULT_SIDES = 11
 
-export type SpellAttributes = Record<AttributeId, string>
+/** A chosen feature per attribute, keyed by attribute id. */
+export type SpellAttributes = Record<string, string>
 
 export const EMPTY_SPELL: SpellAttributes = {
   level: '0',

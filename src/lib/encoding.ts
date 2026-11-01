@@ -47,9 +47,13 @@ export function chordsFor(attribute: Attribute, bits: string, sides: number): Ch
 }
 
 /** Every layer of a spell, in attribute order. */
-export function encodeSpell(spell: SpellAttributes, sides: number): Layer[] {
-  return ATTRIBUTES.map((attribute) => {
-    const feature = spell[attribute.id]
+export function encodeSpell(
+  spell: SpellAttributes,
+  sides: number,
+  attributes: readonly Attribute[] = ATTRIBUTES,
+): Layer[] {
+  return attributes.map((attribute) => {
+    const feature = spell[attribute.id] ?? attribute.features[0]
     const bits = bitsFor(attribute, feature, sides)
     return { attribute, feature, bits, chords: chordsFor(attribute, bits, sides) }
   })
@@ -70,9 +74,12 @@ export function decodeBits(attribute: Attribute, bits: string, sides: number): s
 }
 
 /** Every chord the base could carry, used to draw the faint scaffold. */
-export function scaffoldChords(sides: number): Chord[] {
+export function scaffoldChords(
+  sides: number,
+  attributes: readonly Attribute[] = ATTRIBUTES,
+): Chord[] {
   const out: Chord[] = []
-  for (const attribute of ATTRIBUTES) {
+  for (const attribute of attributes) {
     if (attribute.k > Math.floor(sides / 2)) continue
     for (let i = 0; i < sides; i++) {
       out.push({ from: i, to: (i + attribute.k) % sides, k: attribute.k, attribute })

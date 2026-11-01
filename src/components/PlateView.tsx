@@ -1,14 +1,16 @@
 import { useMemo } from 'react'
 
-import { ATTRIBUTE_INK, GOLD, INK, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../lib/palette'
+import { GOLD, layerInk, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../lib/palette'
 import { buildPlate, cellValue, type PlatePiece } from '../lib/plate'
-import type { SpellAttributes } from '../lib/keys'
+import type { Attribute, SpellAttributes } from '../lib/keys'
 import type { RuneStyle } from '../lib/rune'
 
 interface Props {
   spell: SpellAttributes
   style: RuneStyle
+  attributes?: readonly Attribute[]
   tintByAttribute: boolean
+  ink: string
   title: string
 }
 
@@ -18,12 +20,14 @@ function Piece({
   x,
   y,
   tintByAttribute,
+  ink,
   showScaffold,
 }: {
   piece: PlatePiece
   x: number
   y: number
   tintByAttribute: boolean
+  ink: string
   showScaffold: boolean
 }) {
   const size = piece.rune.size
@@ -44,7 +48,7 @@ function Piece({
         <g
           key={group.attribute.id}
           fill="none"
-          stroke={tintByAttribute ? ATTRIBUTE_INK[group.attribute.id] : INK}
+          stroke={tintByAttribute ? layerInk(group.attribute.k) : ink}
           strokeWidth={width}
           strokeLinecap="round"
         >
@@ -72,8 +76,11 @@ function Piece({
   )
 }
 
-export function PlateView({ spell, style, tintByAttribute, title }: Props) {
-  const plate = useMemo(() => buildPlate(spell, style, title), [spell, style, title])
+export function PlateView({ spell, style, attributes, tintByAttribute, ink, title }: Props) {
+  const plate = useMemo(
+    () => buildPlate(spell, style, title, attributes),
+    [spell, style, title, attributes],
+  )
   const { layout } = plate
 
   return (
@@ -110,6 +117,7 @@ export function PlateView({ spell, style, tintByAttribute, title }: Props) {
         x={layout.main.x}
         y={layout.main.y}
         tintByAttribute={tintByAttribute}
+        ink={ink}
         showScaffold={style.showScaffold}
       />
 
@@ -140,6 +148,7 @@ export function PlateView({ spell, style, tintByAttribute, title }: Props) {
             x={cell.x}
             y={cell.runeY}
             tintByAttribute={tintByAttribute}
+            ink={ink}
             showScaffold={false}
           />
 

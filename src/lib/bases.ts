@@ -20,6 +20,13 @@ export interface Base {
   readonly id: BaseId
   readonly label: string
   readonly description: string
+  /**
+   * Whether the last node runs back round to the first. A polygon closes; an
+   * arc or a curve does not, and on those the chord from the last node to the
+   * first is a long line from one end to the other rather than a short step.
+   * Which nodes lie "between" two endpoints depends on this.
+   */
+  readonly closed: boolean
   readonly place: (sides: number) => Point[]
 }
 
@@ -91,30 +98,35 @@ export const BASES: readonly Base[] = [
     id: 'polygon',
     label: 'Regular polygon',
     description: 'The default of the published dictionaries.',
+    closed: true,
     place: polygon,
   },
   {
     id: 'semicircle',
     label: 'Semicircle',
     description: 'Nodes along a half turn, as in Figure 2.5.',
+    closed: false,
     place: (n) => sampleArc(n, -90, 90),
   },
   {
     id: 'quarter',
     label: 'Quarter circle',
     description: 'A quarter turn, as in Figures 2.7 and 2.10.',
+    closed: false,
     place: (n) => sampleArc(n, 0, 90),
   },
   {
     id: 'quadratic',
     label: 'Quadratic',
     description: 'Nodes on y = ax², as in Figures 2.6 and 2.9.',
+    closed: false,
     place: (n) => sampleCurve(n, (x) => QUADRATIC_A * x * x),
   },
   {
     id: 'cubic',
     label: 'Cubic',
     description: 'Nodes on y = ax³, as in Figure 2.6.',
+    closed: false,
     place: (n) => sampleCurve(n, (x) => CUBIC_A * x * x * x),
   },
 ]

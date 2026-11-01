@@ -121,8 +121,37 @@ The rules fix *which* nodes are joined, never *how*. Both of those are adjustabl
   quadratic and cubic.
 - **Connections** — straight lines, or circular arcs on a curvature dial. At `1.00` the
   arc is the guide's "centred circle", whose circle is centred on the two nodes; below
-  that it is a "non-centred circle". Arcs always bow inwards, so the figure stays within
-  its own bounds.
+  that it is a "non-centred circle".
+- **Ink** — a colour per attribute by default, so a layer can be followed through a
+  crowded figure, or a single colour of your choosing.
+
+### Which way an arc bows
+
+A chord bows **away from the stretch of base lying between its own endpoints**. On a
+polygon that works out as bowing inwards, which is what the guide asks for. On an open
+base it matters more: bowing towards the node centroid would make a chord run alongside
+the curve and disappear into it, so instead it bows to the open side and closes a
+readable shape against the base.
+
+Where the endpoints are neighbours there is no stretch in between, so the local centre of
+curvature stands in — for any circular base that is exactly the centre of the circle.
+This is also why `Base` carries a `closed` flag: on an open curve the chord from the last
+node to the first spans the whole figure rather than stepping across a gap, so which
+nodes count as "between" differs.
+
+## Forging a scheme
+
+The notation never required five attributes, or D&D's. The **Forge** tab takes any set of
+attributes with finite feature lists and writes them in the same hand.
+
+Two floors decide how big the base must be, and the guide names both: `n >= 2 x attributes
++ 1` so no two layers share an edge, and enough unique symbols for "the largest length of
+any attribute list". Taking only the first would quietly alias an overflowing feature onto
+the blank, so the automatic size respects both.
+
+Every scheme reserves index 0 for a blank that draws nothing, exactly as the published
+keys do with `None` and `Blank`. Drafts are kept in browser storage, which is per-viewer
+and can fail outright in a private window — losing a draft and nothing else.
 
 ## Not yet done
 

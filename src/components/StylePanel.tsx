@@ -1,23 +1,28 @@
 import { BASES } from '../lib/bases'
 import { CONNECTORS } from '../lib/connectors'
+import { INK_PRESETS } from '../lib/palette'
 import type { RuneStyle } from '../lib/rune'
 
 interface Props {
   style: RuneStyle
   connector: string
   tintByAttribute: boolean
+  ink: string
   onStyle: (patch: Partial<RuneStyle>) => void
   onConnector: (id: string) => void
   onTint: (on: boolean) => void
+  onInk: (colour: string) => void
 }
 
 export function StylePanel({
   style,
   connector,
   tintByAttribute,
+  ink,
   onStyle,
   onConnector,
   onTint,
+  onInk,
 }: Props) {
   const curved = connector === 'arc'
 
@@ -99,14 +104,48 @@ export function StylePanel({
           />
           Start node
         </label>
+      </fieldset>
+
+      <fieldset className="toggles">
+        <legend>Ink</legend>
         <label>
           <input
             type="checkbox"
             checked={tintByAttribute}
             onChange={(e) => onTint(e.target.checked)}
           />
-          Tint each attribute
+          A colour per attribute
         </label>
+
+        {tintByAttribute ? (
+          <small>Each layer takes its own colour, so a reader can follow one attribute.</small>
+        ) : (
+          <div className="ink-pick">
+            <div className="swatches">
+              {INK_PRESETS.map((preset) => (
+                <button
+                  key={preset.value}
+                  type="button"
+                  className={preset.value === ink ? 'chip on' : 'chip'}
+                  style={{ background: preset.value }}
+                  title={preset.label}
+                  aria-label={preset.label}
+                  aria-pressed={preset.value === ink}
+                  onClick={() => onInk(preset.value)}
+                />
+              ))}
+            </div>
+            <label className="custom-ink">
+              <input
+                type="color"
+                value={ink}
+                aria-label="Custom ink colour"
+                onChange={(e) => onInk(e.target.value)}
+              />
+              <code>{ink}</code>
+            </label>
+          </div>
+        )}
       </fieldset>
     </section>
   )

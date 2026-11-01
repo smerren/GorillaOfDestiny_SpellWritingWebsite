@@ -63,8 +63,8 @@ const MAIN_SIZE = 430
 const CELL_SIZE = 118
 const CELL_GAP = 14
 
-function layout(spell: SpellAttributes): PlateLayout {
-  const span = ATTRIBUTES.length * CELL_SIZE + (ATTRIBUTES.length - 1) * CELL_GAP
+function layout(spell: SpellAttributes, attributes: readonly Attribute[]): PlateLayout {
+  const span = attributes.length * CELL_SIZE + (attributes.length - 1) * CELL_GAP
   const left = (WIDTH - span) / 2
 
   return {
@@ -73,9 +73,9 @@ function layout(spell: SpellAttributes): PlateLayout {
     title: { x: WIDTH / 2, y: 58 },
     main: { x: (WIDTH - MAIN_SIZE) / 2, y: 82, size: MAIN_SIZE },
     divider: { y: 548, x1: 64, x2: WIDTH - 64 },
-    cells: ATTRIBUTES.map((attribute, i) => ({
+    cells: attributes.map((attribute, i) => ({
       attribute,
-      feature: spell[attribute.id],
+      feature: spell[attribute.id] ?? attribute.features[0],
       x: left + i * (CELL_SIZE + CELL_GAP),
       labelY: 582,
       runeY: 594,
@@ -95,10 +95,15 @@ export function cellValue(attribute: Attribute, feature: string): string {
   return feature === 'None' || feature === 'Blank' ? '—' : feature
 }
 
-export function buildPlate(spell: SpellAttributes, style: RuneStyle, title: string): Plate {
-  const plan = layout(spell)
+export function buildPlate(
+  spell: SpellAttributes,
+  style: RuneStyle,
+  title: string,
+  attributes: readonly Attribute[] = ATTRIBUTES,
+): Plate {
+  const plan = layout(spell, attributes)
 
-  const mainRune = buildRune(spell, style, plan.main.size)
+  const mainRune = buildRune(spell, style, plan.main.size, attributes)
   const main: PlatePiece = {
     rune: mainRune,
     groups: mainRune.layers.map((l) => ({ attribute: l.attribute, paths: l.paths })),
@@ -108,7 +113,7 @@ export function buildPlate(spell: SpellAttributes, style: RuneStyle, title: stri
   // would read as noise rather than as context.
   const cellStyle: RuneStyle = { ...style, showScaffold: false }
   const cells = plan.cells.map((cell) => {
-    const rune = buildRune(spell, cellStyle, cell.size)
+    const rune = buildRune(spell, cellStyle, cell.size, attributes)
     const layer = rune.layers.find((l) => l.attribute.id === cell.attribute.id)
     return {
       cell,
@@ -222,8 +227,8 @@ export function plateToSvg(plate: Plate, colours: PlateInk): string {
 }
 
 /** The attributes a plate was written from, for the caption under the title. */
-export function plateSummary(spell: SpellAttributes): string {
-  return encodeSpell(spell, 11)
+export function plateSummary(spell: SpellAttributes, sides = 11): string {
+  return encodeSpell(spell, sides)
     .map((l) => cellValue(l.attribute, l.feature))
     .join(' · ')
 }

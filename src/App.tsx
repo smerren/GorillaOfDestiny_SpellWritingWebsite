@@ -1,217 +1,129 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { AttributePanel } from './components/AttributePanel'
-import { PlateView } from './components/PlateView'
-import { RuneView } from './components/RuneView'
+import { SchemeEditor } from './components/SchemeEditor'
 import { SpellLibrary, type LibrarySpell } from './components/SpellLibrary'
-import { StylePanel } from './components/StylePanel'
-import { downloadPng, downloadText, slug } from './lib/download'
-import { encodeSpell } from './lib/encoding'
-import { DEFAULT_SIDES, EMPTY_SPELL, type AttributeId, type SpellAttributes } from './lib/keys'
-import { ATTRIBUTE_INK, GOLD, INK, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from './lib/palette'
-import { buildPlate, plateToSvg } from './lib/plate'
-import { buildRune, runeToSvg, type RuneStyle } from './lib/rune'
+import { Workbench } from './components/Workbench'
+import { EMPTY_SPELL, type SpellAttributes } from './lib/keys'
+import {
+  blankSpell,
+  compile,
+  FIVE_E,
+  loadDraft,
+  saveDraft,
+  STARTER,
+  type Draft,
+} from './lib/scheme'
 
-type View = 'rune' | 'plate'
+type Tab = 'scribe' | 'forge'
 
-const DEFAULT_STYLE: RuneStyle = {
-  base: 'polygon',
-  sides: DEFAULT_SIDES,
-  curvature: 0,
-  showScaffold: true,
-  showNodes: true,
-  showStartNode: true,
-}
-
-export function App() {
+/** The 5e dictionary: a fixed scheme with a spellbook to draw from. */
+function Scribe() {
   const [spell, setSpell] = useState<SpellAttributes>(EMPTY_SPELL)
   const [name, setName] = useState<string | null>(null)
-  const [style, setStyle] = useState<RuneStyle>(DEFAULT_STYLE)
-  const [connector, setConnector] = useState('straight')
-  const [tintByAttribute, setTint] = useState(false)
-  const [focus, setFocus] = useState<AttributeId | null>(null)
-  const [view, setView] = useState<View>('rune')
 
-  const effectiveStyle = useMemo<RuneStyle>(
-    () => ({ ...style, curvature: connector === 'straight' ? 0 : style.curvature }),
-    [style, connector],
-  )
-
-  const setAttribute = useCallback((id: AttributeId, feature: string) => {
-    setSpell((prev) => ({ ...prev, [id]: feature }))
-    setName(null)
-  }, [])
-
-  const pickSpell = useCallback((picked: LibrarySpell) => {
+  const pick = useCallback((picked: LibrarySpell) => {
     const { name: picked_name, ...attributes } = picked
     setSpell(attributes)
     setName(picked_name)
   }, [])
 
-  const patchStyle = useCallback((patch: Partial<RuneStyle>) => {
-    setStyle((prev) => ({ ...prev, ...patch }))
+  const change = useCallback((next: SpellAttributes) => {
+    setSpell(next)
+    // Once an attribute is altered this is no longer the spell from the book.
+    setName(null)
   }, [])
 
-  const changeConnector = useCallback((id: string) => {
-    setConnector(id)
-    // Opening the arcs on a figure that was straight should show something.
-    setStyle((prev) => (id === 'arc' && prev.curvature < 0.05 ? { ...prev, curvature: 1 } : prev))
-  }, [])
+  return (
+    <Workbench
+      scheme={FIVE_E}
+      spell={spell}
+      onSpell={change}
+      title={name}
+      onTitle={setName}
+    >
+      <SpellLibrary current={name} onPick={pick} />
+    </Workbench>
+  )
+}
 
-  const layers = useMemo(() => encodeSpell(spell, effectiveStyle.sides), [spell, effectiveStyle])
+/** A scheme of the author's own making. */
+function Forge() {
+  const [draft, setDraft] = useState<Draft>(() => loadDraft() ?? STARTER)
+  const [chosen, setChosen] = useState<SpellAttributes>({})
+  const [name, setName] = useState<string | null>(null)
 
-  const title = name ?? 'Unnamed rune'
+  useEffect(() => {
+    saveDraft(draft)
+  }, [draft])
 
-  const svg = useMemo(() => {
-    if (view === 'plate') {
-      return plateToSvg(buildPlate(spell, effectiveStyle, title), {
-        ink: INK,
-        scaffoldInk: SCAFFOLD_INK,
-        parchment: PARCHMENT,
-        text: TEXT_INK,
-        gold: GOLD,
-        tint: tintByAttribute ? (a) => ATTRIBUTE_INK[a.id] : null,
-      })
+  const scheme = useMemo(() => compile(draft), [draft])
+
+  // Features come and go while the scheme is being written, so anything no
+  // longer on offer falls back to the blank rather than hanging about unseen.
+  const spell = useMemo(() => {
+    const blank = blankSpell(scheme)
+    const out: SpellAttributes = { ...blank }
+    for (const attribute of scheme.attributes) {
+      const picked = chosen[attribute.id]
+      if (picked && attribute.features.includes(picked)) out[attribute.id] = picked
     }
-    return runeToSvg(buildRune(spell, effectiveStyle, 100), {
-      ink: INK,
-      scaffoldInk: SCAFFOLD_INK,
-      showNodes: effectiveStyle.showNodes,
-      showStartNode: effectiveStyle.showStartNode,
-    })
-  }, [view, spell, effectiveStyle, title, tintByAttribute])
+    return out
+  }, [scheme, chosen])
+
+  return (
+    <Workbench
+      scheme={scheme}
+      spell={spell}
+      onSpell={setChosen}
+      title={name}
+      onTitle={setName}
+    >
+      <SchemeEditor draft={draft} onDraft={setDraft} onReset={() => setDraft(STARTER)} />
+    </Workbench>
+  )
+}
+
+export function App() {
+  const [tab, setTab] = useState<Tab>('scribe')
 
   return (
     <div className="page">
       <header className="masthead">
         <h1>Spell Writing</h1>
         <p className="standfirst">
-          A scribing table for the notation set out in <em>The Spell Writing Guide</em> by
-          the Gorilla of Destiny. Choose what a spell <em>is</em>, and read back the shape it
-          is written as.
+          A scribing table for the notation set out in <em>The Spell Writing Guide</em> by the
+          Gorilla of Destiny. Choose what a spell <em>is</em>, and read back the shape it is
+          written as.
         </p>
+
+        <nav className="tabs" role="tablist" aria-label="Scheme">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'scribe'}
+            className={tab === 'scribe' ? 'on' : undefined}
+            onClick={() => setTab('scribe')}
+          >
+            Dungeons &amp; Dragons 5e
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === 'forge'}
+            className={tab === 'forge' ? 'on' : undefined}
+            onClick={() => setTab('forge')}
+          >
+            Forge your own
+          </button>
+        </nav>
       </header>
 
-      <main className="layout">
-        <div className="stage">
-          <div className="view-switch" role="tablist" aria-label="View">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={view === 'rune'}
-              className={view === 'rune' ? 'on' : undefined}
-              onClick={() => setView('rune')}
-            >
-              Rune
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={view === 'plate'}
-              className={view === 'plate' ? 'on' : undefined}
-              onClick={() => setView('plate')}
-            >
-              Spellbook plate
-            </button>
-          </div>
-
-          <figure className="plate">
-            {view === 'rune' ? (
-              <RuneView
-                spell={spell}
-                style={effectiveStyle}
-                tintByAttribute={tintByAttribute}
-                focus={focus}
-              />
-            ) : (
-              <PlateView
-                spell={spell}
-                style={effectiveStyle}
-                tintByAttribute={tintByAttribute}
-                title={title}
-              />
-            )}
-            <figcaption>
-              <input
-                className="title-input"
-                value={name ?? ''}
-                placeholder="Unnamed rune"
-                aria-label="Spell name"
-                onChange={(e) => setName(e.target.value || null)}
-              />
-            </figcaption>
-          </figure>
-
-          <div className="readout">
-            <h2>Reading</h2>
-            <table>
-              <tbody>
-                {layers.map((layer) => (
-                  <tr
-                    key={layer.attribute.id}
-                    onMouseEnter={() => setFocus(layer.attribute.id)}
-                    onMouseLeave={() => setFocus(null)}
-                  >
-                    <th scope="row">{layer.attribute.label}</th>
-                    <td className="feature">{layer.feature}</td>
-                    <td>
-                      <code>{layer.bits}</code>
-                    </td>
-                    <td className="count">
-                      {layer.chords.length === 0
-                        ? 'no lines'
-                        : `${layer.chords.length} line${layer.chords.length > 1 ? 's' : ''}`}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="actions">
-              <button
-                type="button"
-                onClick={() => downloadText(`${slug(title)}.svg`, svg, 'image/svg+xml')}
-              >
-                Download SVG
-              </button>
-              <button type="button" onClick={() => downloadPng(`${slug(title)}.png`, svg, 1200)}>
-                Download PNG
-              </button>
-              <button
-                type="button"
-                onClick={() => void navigator.clipboard?.writeText(svg)}
-              >
-                Copy SVG
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <aside className="controls">
-          <AttributePanel
-            spell={spell}
-            sides={effectiveStyle.sides}
-            tintByAttribute={tintByAttribute}
-            onChange={setAttribute}
-            onFocus={setFocus}
-          />
-          <StylePanel
-            style={style}
-            connector={connector}
-            tintByAttribute={tintByAttribute}
-            onStyle={patchStyle}
-            onConnector={changeConnector}
-            onTint={setTint}
-          />
-          <SpellLibrary current={name} onPick={pickSpell} />
-        </aside>
-      </main>
+      {tab === 'scribe' ? <Scribe /> : <Forge />}
 
       <footer className="colophon">
         <p>
-          The spell writing system is the work of{' '}
-          <strong>The Gorilla of Destiny</strong> (@GorillaOfDestiny). This site is not
-          endorsed by or authored by them.
+          The spell writing system is the work of <strong>The Gorilla of Destiny</strong>{' '}
+          (@GorillaOfDestiny). This site is not endorsed by or authored by them.
         </p>
         <p>
           Spell attributes are taken from the System Reference Document 5.1 by Wizards of the

@@ -1,21 +1,27 @@
 import { useMemo } from 'react'
 
-import { ATTRIBUTE_INK, INK, SCAFFOLD_INK } from '../lib/palette'
+import { layerInk, SCAFFOLD_INK } from '../lib/palette'
 import { buildRune, type RuneStyle } from '../lib/rune'
-import type { SpellAttributes } from '../lib/keys'
+import type { Attribute, SpellAttributes } from '../lib/keys'
 
 interface Props {
   spell: SpellAttributes
   style: RuneStyle
+  attributes?: readonly Attribute[]
   tintByAttribute: boolean
+  /** Used for every layer when they are not tinted apart. */
+  ink: string
   /** Dims every layer but this one, so a reader can pick an attribute out. */
   focus: string | null
 }
 
 const VIEW = 100
 
-export function RuneView({ spell, style, tintByAttribute, focus }: Props) {
-  const rune = useMemo(() => buildRune(spell, style, VIEW), [spell, style])
+export function RuneView({ spell, style, attributes, tintByAttribute, ink, focus }: Props) {
+  const rune = useMemo(
+    () => buildRune(spell, style, VIEW, attributes),
+    [spell, style, attributes],
+  )
 
   const stroke = VIEW / 70
   const node = VIEW / 110
@@ -25,7 +31,7 @@ export function RuneView({ spell, style, tintByAttribute, focus }: Props) {
       className="rune"
       viewBox={`0 0 ${VIEW} ${VIEW}`}
       role="img"
-      aria-label={`Rune for a level ${spell.level} ${spell.school} spell`}
+      aria-label={`Rune made of ${rune.layers.reduce((t, l) => t + l.chords.length, 0)} chords`}
     >
       {style.showScaffold && (
         <g fill="none" stroke={SCAFFOLD_INK} strokeWidth={stroke / 6} opacity={0.4}>
@@ -41,7 +47,7 @@ export function RuneView({ spell, style, tintByAttribute, focus }: Props) {
           <g
             key={layer.attribute.id}
             fill="none"
-            stroke={tintByAttribute ? ATTRIBUTE_INK[layer.attribute.id] : INK}
+            stroke={tintByAttribute ? layerInk(layer.attribute.k) : ink}
             strokeWidth={stroke}
             strokeLinecap="round"
             opacity={dimmed ? 0.12 : 1}

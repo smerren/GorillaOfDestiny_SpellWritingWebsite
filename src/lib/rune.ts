@@ -6,7 +6,7 @@
 import { BASE_BY_ID, type BaseId, type Point } from './bases'
 import { chordPath } from './connectors'
 import { encodeSpell, scaffoldChords, type Chord, type Layer } from './encoding'
-import type { SpellAttributes } from './keys'
+import type { Attribute, SpellAttributes } from './keys'
 
 export interface RuneStyle {
   readonly base: BaseId
@@ -32,25 +32,110 @@ export interface Rune {
 /** Leaves room for the stroke and the node rings to sit inside the viewBox. */
 const MARGIN = 0.1
 
-export function buildRune(spell: SpellAttributes, style: RuneStyle, size = 100): Rune {
+/**
+ * The nodes lying between two endpoints along the base.
+ *
+ * On a closed base that is the shorter way round. On an open one there is no
+ * way round at all, so it is simply the nodes in between by index — which is
+ * why a chord from the last node to the first spans the whole curve rather
+ * than stepping across a gap.
+ */
+export function betweenIndices(count: number, closed: boolean, i: number, j: number): number[] {
+  if (!closed) {
+    const lo = Math.min(i, j)
+    const hi = Math.max(i, j)
+    return Array.from({ length: Math.max(0, hi - lo - 1) }, (_, t) => lo + 1 + t)
+  }
+  const forward = (j - i + count) % count
+  const [from, steps] = forward * 2 <= count ? [i, forward] : [j, count - forward]
+  return Array.from({ length: Math.max(0, steps - 1) }, (_, t) => (from + 1 + t) % count)
+}
+
+/** Centre of the circle through three points, or null if they are collinear. */
+function circumcentre(a: Point, b: Point, c: Point): Point | null {
+  const d = 2 * (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y))
+  if (Math.abs(d) < 1e-9) return null
+  const aa = a.x * a.x + a.y * a.y
+  const bb = b.x * b.x + b.y * b.y
+  const cc = c.x * c.x + c.y * c.y
+  return {
+    x: (aa * (b.y - c.y) + bb * (c.y - a.y) + cc * (a.y - b.y)) / d,
+    y: (aa * (c.x - b.x) + bb * (a.x - c.x) + cc * (b.x - a.x)) / d,
+  }
+}
+
+/**
+ * The point a chord should bow towards.
+ *
+ * A bow that follows the base curve runs alongside it and is hard to pick out,
+ * so a chord bows away from the stretch of base between its own endpoints. On
+ * a polygon that works out as bowing inwards, which is what the guide asks for;
+ * on an arc or a curve it bows to the open side instead of nesting along it.
+ *
+ * Where the endpoints are neighbours there is no stretch in between, so the
+ * local centre of curvature stands in — for a circular base that is exactly
+ * the centre of the circle.
+ */
+function bowTowards(
+  nodes: readonly Point[],
+  closed: boolean,
+  i: number,
+  j: number,
+  fallback: Point,
+): Point {
+  const inner = betweenIndices(nodes.length, closed, i, j)
+
+  if (inner.length > 0) {
+    const cx = inner.reduce((t, n) => t + nodes[n].x, 0) / inner.length
+    const cy = inner.reduce((t, n) => t + nodes[n].y, 0) / inner.length
+    const mid = { x: (nodes[i].x + nodes[j].x) / 2, y: (nodes[i].y + nodes[j].y) / 2 }
+    // Reflecting the stretch through the chord turns "away from" into a point
+    // to aim at, which is all the connector needs.
+    return { x: 2 * mid.x - cx, y: 2 * mid.y - cy }
+  }
+
+  const count = nodes.length
+  const lo = Math.min(i, j)
+  const outside = closed ? (lo - 1 + count) % count : lo > 0 ? lo - 1 : Math.max(i, j) + 1
+  return circumcentre(nodes[outside] ?? nodes[i], nodes[i], nodes[j]) ?? fallback
+}
+
+/** Where a chord of a finished figure should bow towards. */
+export function bowTarget(rune: Rune, closed: boolean, i: number, j: number): Point {
+  return bowTowards(rune.nodes, closed, i, j, rune.centre)
+}
+
+export function buildRune(
+  spell: SpellAttributes,
+  style: RuneStyle,
+  size = 100,
+  attributes?: readonly Attribute[],
+): Rune {
   const radius = (size / 2) * (1 - MARGIN)
   const mid = size / 2
 
-  const unit = BASE_BY_ID[style.base].place(style.sides)
+  const base = BASE_BY_ID[style.base]
+  const unit = base.place(style.sides)
   const nodes = unit.map((p) => ({ x: mid + p.x * radius, y: mid + p.y * radius }))
   const centre = {
     x: nodes.reduce((t, p) => t + p.x, 0) / nodes.length,
     y: nodes.reduce((t, p) => t + p.y, 0) / nodes.length,
   }
 
-  const draw = (c: Chord) => chordPath(nodes[c.from], nodes[c.to], centre, style.curvature)
+  const draw = (c: Chord) =>
+    chordPath(
+      nodes[c.from],
+      nodes[c.to],
+      bowTowards(nodes, base.closed, c.from, c.to, centre),
+      style.curvature,
+    )
 
-  const layers = encodeSpell(spell, style.sides).map((layer) => ({
+  const layers = encodeSpell(spell, style.sides, attributes).map((layer) => ({
     ...layer,
     paths: layer.chords.map(draw),
   }))
 
-  const scaffold = style.showScaffold ? scaffoldChords(style.sides).map(draw) : []
+  const scaffold = style.showScaffold ? scaffoldChords(style.sides, attributes).map(draw) : []
 
   return { nodes, centre, layers, scaffold, size }
 }

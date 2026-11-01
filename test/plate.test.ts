@@ -6,7 +6,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { ATTRIBUTES, DEFAULT_SIDES, type SpellAttributes } from '../src/lib/keys'
-import { ATTRIBUTE_INK, GOLD, INK, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../src/lib/palette'
+import { GOLD, INK, layerInk, PARCHMENT, SCAFFOLD_INK, TEXT_INK } from '../src/lib/palette'
 import { buildPlate, cellValue, plateToSvg } from '../src/lib/plate'
 import type { RuneStyle } from '../src/lib/rune'
 
@@ -110,10 +110,10 @@ describe('plate', () => {
   it('tints every layer when asked', () => {
     const svg = plateToSvg(buildPlate(FIREBALL, STYLE, 'Fireball'), {
       ...PLAIN,
-      tint: (a) => ATTRIBUTE_INK[a.id],
+      tint: (a) => layerInk(a.k),
     })
     for (const attribute of ATTRIBUTES) {
-      expect(svg).toContain(ATTRIBUTE_INK[attribute.id])
+      expect(svg).toContain(layerInk(attribute.k))
     }
   })
 })

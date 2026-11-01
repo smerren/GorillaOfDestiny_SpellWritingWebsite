@@ -535,3 +535,148 @@ input[type="checkbox"] {
   font-family: "EB Garamond", Georgia, serif;
   font-size: 11px;
 }
+
+/* ---------- scheme tabs ---------- */
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-top: 1.5rem;
+}
+
+.tabs button {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  padding: 0.5rem 1.1rem;
+}
+
+.tabs button:hover {
+  background: rgba(201, 173, 106, 0.16);
+}
+
+.tabs button.on {
+  color: #4a2a18;
+  border-bottom-color: var(--ink);
+}
+
+/* ---------- ink picker ---------- */
+
+.ink-pick {
+  display: grid;
+  gap: 0.5rem;
+  padding-top: 0.15rem;
+}
+
+.swatches {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.chip.on {
+  box-shadow:
+    0 0 0 2px var(--parchment),
+    0 0 0 3px var(--gold);
+}
+
+.custom-ink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.custom-ink input[type="color"] {
+  width: 44px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  background: transparent;
+  cursor: pointer;
+}
+
+.readout th .swatch {
+  display: inline-block;
+  margin-right: 0.45rem;
+  vertical-align: baseline;
+}
+
+/* ---------- scheme editor ---------- */
+
+input[type="text"],
+textarea {
+  width: 100%;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 0.95rem;
+  padding: 0.38rem 0.5rem;
+  color: var(--text);
+  background: rgba(255, 252, 243, 0.75);
+  border: 1px solid var(--rule);
+}
+
+.draft-attribute {
+  border: 1px solid var(--rule);
+  padding: 0.6rem 0.7rem 0.7rem;
+  background: rgba(255, 252, 243, 0.35);
+  display: grid;
+  gap: 0.45rem;
+}
+
+.draft-name {
+  flex: 1;
+  min-width: 0;
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.82rem;
+  padding: 0.2rem 0.35rem;
+}
+
+.draft-features {
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.draft-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+.draft-buttons {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.draft-buttons button {
+  padding: 0.2rem 0.45rem;
+  font-size: 0.66rem;
+}
+
+.draft-buttons button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.fault {
+  margin: 0;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.82rem;
+  color: #6d2020;
+  background: rgba(139, 0, 0, 0.07);
+  border-left: 2px solid var(--ink);
+}

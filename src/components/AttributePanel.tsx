@@ -1,16 +1,26 @@
-import { ATTRIBUTES, type AttributeId, type SpellAttributes } from '../lib/keys'
-import { ATTRIBUTE_INK } from '../lib/palette'
+import { ATTRIBUTES, type Attribute, type AttributeId, type SpellAttributes } from '../lib/keys'
+import { layerInk } from '../lib/palette'
 import { bitsFor } from '../lib/encoding'
 
 interface Props {
   spell: SpellAttributes
   sides: number
+  attributes?: readonly Attribute[]
   tintByAttribute: boolean
+  ink: string
   onChange: (id: AttributeId, feature: string) => void
   onFocus: (id: AttributeId | null) => void
 }
 
-export function AttributePanel({ spell, sides, tintByAttribute, onChange, onFocus }: Props) {
+export function AttributePanel({
+  spell,
+  sides,
+  attributes = ATTRIBUTES,
+  tintByAttribute,
+  ink,
+  onChange,
+  onFocus,
+}: Props) {
   return (
     <section className="panel">
       <h2>Attributes</h2>
@@ -20,8 +30,8 @@ export function AttributePanel({ spell, sides, tintByAttribute, onChange, onFocu
       </p>
 
       <div className="attributes">
-        {ATTRIBUTES.map((attribute) => {
-          const feature = spell[attribute.id]
+        {attributes.map((attribute) => {
+          const feature = spell[attribute.id] ?? attribute.features[0]
           const bits = bitsFor(attribute, feature, sides)
           return (
             <label
@@ -34,7 +44,7 @@ export function AttributePanel({ spell, sides, tintByAttribute, onChange, onFocu
                 <span
                   className="swatch"
                   style={{
-                    background: tintByAttribute ? ATTRIBUTE_INK[attribute.id] : 'var(--ink)',
+                    background: tintByAttribute ? layerInk(attribute.k) : ink,
                   }}
                   aria-hidden="true"
                 />

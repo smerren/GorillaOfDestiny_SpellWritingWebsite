@@ -11,10 +11,29 @@ import { describe, expect, it } from 'vitest'
 
 import { BASES, BASE_BY_ID, type Point } from '../src/lib/bases'
 import { chordPath } from '../src/lib/connectors'
-import { DEFAULT_SIDES } from '../src/lib/keys'
+import { DEFAULT_SIDES, type SpellAttributes } from '../src/lib/keys'
+import { betweenIndices, bowTarget, buildRune, type RuneStyle } from '../src/lib/rune'
 
 const N = DEFAULT_SIDES
 const ORIGIN: Point = { x: 0, y: 0 }
+
+/** A spell dense enough that every layer contributes chords. */
+const SPELL: SpellAttributes = {
+  level: '9',
+  school: 'Transmutation',
+  damage: 'Thunder',
+  area: 'Sphere (60)',
+  range: 'Touch',
+}
+
+const STYLE: RuneStyle = {
+  base: 'polygon',
+  sides: N,
+  curvature: 0,
+  showScaffold: false,
+  showNodes: true,
+  showStartNode: true,
+}
 
 /** W3C SVG 1.1 F.6.5: recover the centre of an arc from its endpoint form. */
 function arcApex(p: Point, q: Point, path: string): Point {
@@ -65,41 +84,69 @@ describe('connectors', () => {
     expect(radius).toBeCloseTo(5, 3)
   })
 
-  it('bows every chord towards the centre of the figure', () => {
+  it('bows every chord away from the base between its endpoints', () => {
+    // A bow that follows the base runs alongside it and is hard to read. On a
+    // polygon this comes out as bowing inwards; on an open curve it bows to the
+    // open side rather than nesting along the curve.
     for (const base of BASES) {
-      const nodes = base.place(N)
-      const centre = {
-        x: nodes.reduce((t, p) => t + p.x, 0) / N,
-        y: nodes.reduce((t, p) => t + p.y, 0) / N,
-      }
-      for (const curvature of [0.3, 1, 1.4]) {
+      for (const curvature of [0.3, 1]) {
         for (let i = 0; i < N; i++) {
           for (const k of [1, 2, 3, 4, 5]) {
-            const p = nodes[i]
-            const q = nodes[(i + k) % N]
-            if (Math.hypot(q.x - p.x, q.y - p.y) < 1e-6) continue
+            const j = (i + k) % N
+            const rune = buildRune(SPELL, { ...STYLE, base: base.id, curvature }, 100)
+            const p = rune.nodes[i]
+            const q = rune.nodes[j]
+
+            const inner = betweenIndices(N, base.closed, i, j)
+            if (inner.length === 0) continue
 
             const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 }
-            const toCentre = { x: centre.x - mid.x, y: centre.y - mid.y }
+            const away = {
+              x: mid.x - inner.reduce((t, n) => t + rune.nodes[n].x, 0) / inner.length,
+              y: mid.y - inner.reduce((t, n) => t + rune.nodes[n].y, 0) / inner.length,
+            }
 
-            // When the centre is collinear with the chord there is no inward
-            // side to bow towards, and either choice is equally correct.
+            // If that stretch sits on the chord there is no side to prefer.
             const dx = q.x - p.x
             const dy = q.y - p.y
-            const span = Math.hypot(dx, dy)
-            const offChord = Math.abs(dx * toCentre.y - dy * toCentre.x) / span
-            if (offChord < 1e-3) continue
+            const off = Math.abs(dx * away.y - dy * away.x) / Math.hypot(dx, dy)
+            if (off < 1e-3) continue
 
-            const apex = arcApex(p, q, chordPath(p, q, centre, curvature))
+            const apex = arcApex(p, q, chordPath(p, q, bowTarget(rune, base.closed, i, j), curvature))
             const bow = { x: apex.x - mid.x, y: apex.y - mid.y }
             expect(
-              bow.x * toCentre.x + bow.y * toCentre.y,
+              bow.x * away.x + bow.y * away.y,
               `${base.id} curvature=${curvature} i=${i} k=${k}`,
             ).toBeGreaterThan(0)
           }
         }
       }
     }
+  })
+
+  it('bows a quarter-circle end-to-end chord away from the arc, not along it', () => {
+    // The case that showed the old rule was wrong: the chord joining the two
+    // ends of a quarter circle used to bow the same way the arc curves, so it
+    // ran alongside the base instead of closing a readable shape against it.
+    const rune = buildRune(SPELL, { ...STYLE, base: 'quarter', curvature: 0.6 }, 100)
+    const first = rune.nodes[0]
+    const last = rune.nodes[N - 1]
+
+    const dx = last.x - first.x
+    const dy = last.y - first.y
+    const span = Math.hypot(dx, dy)
+    /** Signed distance from the end-to-end chord. */
+    const side = (p: Point) => (dx * (p.y - first.y) - dy * (p.x - first.x)) / span
+
+    const furthest = rune.nodes.reduce((best, p) =>
+      Math.abs(side(p)) > Math.abs(side(best)) ? p : best,
+    )
+    const arcSide = Math.sign(side(furthest))
+    expect(arcSide).not.toBe(0)
+
+    const path = chordPath(first, last, bowTarget(rune, false, 0, N - 1), 0.6)
+    const apex = arcApex(first, last, path)
+    expect(Math.sign(side(apex))).toBe(-arcSide)
   })
 })
 
