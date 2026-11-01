@@ -259,6 +259,12 @@ and easing its distance keeps the figure spread the whole way. A swung dot can b
 reach wider than either end of the move, so the frame grows to hold it rather than
 cropping.
 
+Which way a line bows is settled once, on the arrangement being moved towards, and held
+for the whole move. Deciding it per frame lets a line swap sides partway past a
+degenerate arrangement and flicker — on a ring to quarter-circle change, twelve of them
+did. The bow is carried as a signed amount, so a line that genuinely changes sides eases
+through straight rather than snapping over.
+
 `prefers-reduced-motion` skips all of it.
 
 ## Forging a scheme

@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest'
 
 import { blend, ease, grownBy, lerp, lerpPoint, type Frame } from '../src/lib/animate'
 import { BASE_BY_ID } from '../src/lib/bases'
-import { chordBetween } from '../src/lib/rune'
+import { bowSignOf, chordBetween } from '../src/lib/rune'
 
 const frame = (nodes: Array<[number, number]>, size = 100): Frame => ({
   nodes: nodes.map(([x, y]) => ({ x, y })),
@@ -148,13 +148,13 @@ describe('a part-drawn chord', () => {
   const nodes = BASE_BY_ID.polygon.place(11).map((p) => ({ x: 50 + p.x * 45, y: 50 + p.y * 45 }))
 
   it('is nothing at all when it has not started', () => {
-    const d = chordBetween(nodes, true, 0, 1, 0, 0)
+    const d = chordBetween(nodes, 0, 1, 0, 0)
     // Just a move to the first node: no line yet.
     expect(d).toMatch(/^M [\d.-]+ [\d.-]+$/)
   })
 
   it('reaches the far node once whole', () => {
-    const whole = chordBetween(nodes, true, 0, 3, 0, 1)
+    const whole = chordBetween(nodes, 0, 3, 0, 1)
     const q = nodes[3]
     expect(whole).toContain(`${q.x.toFixed(3)} ${q.y.toFixed(3)}`)
   })
@@ -162,7 +162,7 @@ describe('a part-drawn chord', () => {
   it('grows from its first node rather than appearing all at once', () => {
     const start = nodes[0]
     for (const grown of [0.25, 0.5, 0.75]) {
-      const d = chordBetween(nodes, true, 0, 3, 0, grown)
+      const d = chordBetween(nodes, 0, 3, 0, grown)
       expect(d.startsWith(`M ${start.x.toFixed(3)} ${start.y.toFixed(3)}`)).toBe(true)
       const [, x, y] = d.match(/L ([\d.-]+) ([\d.-]+)/)!
       const reach = Math.hypot(Number(x) - start.x, Number(y) - start.y)
@@ -173,7 +173,7 @@ describe('a part-drawn chord', () => {
 
   it('curves on the way in the way it will when it arrives', () => {
     // A bowed line part drawn is still an arc, not a straight stand-in.
-    expect(chordBetween(nodes, true, 0, 3, 0.6, 0.5)).toContain(' A ')
+    expect(chordBetween(nodes, 0, 3, 0.6, 0.5)).toContain(' A ')
   })
 })
 
@@ -182,5 +182,50 @@ describe('lerp', () => {
     expect(lerp(3, 9, 0)).toBe(3)
     expect(lerp(3, 9, 1)).toBe(9)
     expect(lerpPoint({ x: 0, y: 0 }, { x: 4, y: 8 }, 0.25)).toEqual({ x: 1, y: 2 })
+  })
+})
+
+describe('which way a line bows while it is moving', () => {
+  const ring = BASE_BY_ID.polygon.place(11).map((p) => ({ x: 50 + p.x * 45, y: 50 + p.y * 45 }))
+
+  it('is a sign, so it can be held steady for a whole move', () => {
+    const side = bowSignOf(ring, true, 0, 3)
+    expect(Math.abs(side)).toBe(1)
+  })
+
+  it('bows the opposite way when the sign flips', () => {
+    const left = chordBetween(ring, 0, 3, 0.6)
+    const right = chordBetween(ring, 0, 3, -0.6)
+    expect(left).not.toBe(right)
+    // Same radius, opposite sweep: the arc is mirrored across the chord.
+    const sweepOf = (d: string) => d.match(/A [\d.]+ [\d.]+ 0 \d (\d)/)![1]
+    expect(sweepOf(left)).not.toBe(sweepOf(right))
+  })
+
+  it('passes through straight rather than jumping when it changes sides', () => {
+    // Easing a signed bow from one side to the other crosses zero, where the
+    // line is briefly straight. Nowhere does it leap from one arc to the other.
+    let previous = chordBetween(ring, 0, 3, 0.6)
+    let straightened = false
+    for (let t = 0.05; t <= 1.0001; t += 0.05) {
+      const bow = 0.6 - 1.2 * t
+      const now = chordBetween(ring, 0, 3, bow)
+      if (!now.includes(' A ')) straightened = true
+      previous = now
+    }
+    expect(straightened).toBe(true)
+    expect(previous).toContain(' A ')
+  })
+
+  it('keeps the same side for every frame of a move, given one sign', () => {
+    // What the animation actually does: one sign, many frames.
+    const side = bowSignOf(ring, true, 2, 7)
+    const sweeps = new Set<string>()
+    for (let grown = 0.2; grown <= 1.0001; grown += 0.1) {
+      const d = chordBetween(ring, 2, 7, side * 0.6, grown)
+      const m = d.match(/A [\d.]+ [\d.]+ 0 \d (\d)/)
+      if (m) sweeps.add(m[1])
+    }
+    expect(sweeps.size).toBe(1)
   })
 })

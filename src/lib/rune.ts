@@ -4,7 +4,7 @@
  */
 
 import { BASE_BY_ID, type BaseId, type Point } from './bases'
-import { chord, unionBox, type Box } from './connectors'
+import { bowDirection, bowedChord, chord, unionBox, type Box } from './connectors'
 import { scaffoldChords, type Chord, type Figure, type Layer } from './encoding'
 
 
@@ -138,23 +138,38 @@ function bowTowards(
  */
 export function chordBetween(
   nodes: readonly Point[],
-  closed: boolean,
   from: number,
   to: number,
-  curvature: number,
+  bow: number,
   grown = 1,
 ): string {
-  const centre = {
-    x: nodes.reduce((t, p) => t + p.x, 0) / nodes.length,
-    y: nodes.reduce((t, p) => t + p.y, 0) / nodes.length,
-  }
   const start = nodes[from]
   const finish = nodes[to]
   const end = {
     x: start.x + (finish.x - start.x) * grown,
     y: start.y + (finish.y - start.y) * grown,
   }
-  return chord(start, end, bowTowards(nodes, closed, from, to, centre), curvature).d
+  return bowedChord(start, end, bow).d
+}
+
+/**
+ * Which way a chord bows on a given arrangement of dots, as +1 or -1.
+ *
+ * Settled once for a whole move rather than per frame. Recomputing it as the
+ * dots travel lets it swap sides partway past a degenerate arrangement, and
+ * the line flickers between the two.
+ */
+export function bowSignOf(
+  nodes: readonly Point[],
+  closed: boolean,
+  from: number,
+  to: number,
+): number {
+  const centre = {
+    x: nodes.reduce((t, p) => t + p.x, 0) / nodes.length,
+    y: nodes.reduce((t, p) => t + p.y, 0) / nodes.length,
+  }
+  return bowDirection(nodes[from], nodes[to], bowTowards(nodes, closed, from, to, centre))
 }
 
 /** Where a chord of a finished figure should bow towards. */

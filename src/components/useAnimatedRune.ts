@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { blend, DURATION, grownBy, prefersStillness, type Frame } from '../lib/animate'
 import { BASE_BY_ID, type Point } from '../lib/bases'
 import { scaffoldChords, type Figure } from '../lib/encoding'
-import { buildRune, chordBetween, type RuneStyle } from '../lib/rune'
+import { bowSignOf, buildRune, chordBetween, type RuneStyle } from '../lib/rune'
 
 /** One line of the figure, with how much of it is currently drawn. */
 export interface AnimatedChord {
@@ -13,6 +13,8 @@ export interface AnimatedChord {
   readonly to: number
   /** 1 fully drawn, 0 gone, between while arriving or leaving. */
   readonly grown: number
+  /** Signed: the sign is which way it bows, the size how deeply. */
+  readonly bow: number
 }
 
 export interface AnimatedRune {
@@ -25,7 +27,12 @@ export interface AnimatedRune {
   readonly pathOf: (chord: AnimatedChord) => string
 }
 
-type Growth = ReadonlyMap<string, number>
+interface Drawn {
+  readonly grown: number
+  readonly bow: number
+}
+
+type Growth = ReadonlyMap<string, Drawn>
 
 const nameOf = (attributeId: string, from: number) => `${attributeId}:${from}`
 
@@ -49,12 +56,18 @@ export function useAnimatedRune(figure: Figure, style: RuneStyle, size = 100): A
   )
 
   const goalGrowth: Growth = useMemo(() => {
-    const out = new Map<string, number>()
+    const out = new Map<string, Drawn>()
     for (const layer of target.layers) {
-      for (const chord of layer.chords) out.set(nameOf(layer.attribute.id, chord.from), 1)
+      for (const chord of layer.chords) {
+        // Settled here, on the arrangement being moved towards, and then held
+        // for the whole move. Deciding it per frame lets a line swap sides
+        // partway and flicker.
+        const bow = bowSignOf(target.nodes, closed, chord.from, chord.to) * style.curvature
+        out.set(nameOf(layer.attribute.id, chord.from), { grown: 1, bow })
+      }
     }
     return out
-  }, [target])
+  }, [target, closed, style.curvature])
 
   // What is on screen. The next move starts from here, so interrupting one
   // half way does not jump.
@@ -98,12 +111,19 @@ export function useAnimatedRune(figure: Figure, style: RuneStyle, size = 100): A
       const t = Math.min(1, (performance.now() - begun) / DURATION)
       shown.current = blend(fromFrame, goalRef.current, t)
 
-      const next = new Map<string, number>()
+      const next = new Map<string, Drawn>()
       const names = new Set([...fromGrowth.keys(), ...goalGrowthRef.current.keys()])
       for (const name of names) {
-        const amount = grownBy(fromGrowth.get(name) ?? 0, goalGrowthRef.current.get(name) ?? 0, t)
+        const was = fromGrowth.get(name)
+        const wants = goalGrowthRef.current.get(name)
+        const grown = grownBy(was?.grown ?? 0, wants?.grown ?? 0, t)
         // A line that has gone is dropped rather than kept at zero.
-        if (amount > 0.001) next.set(name, amount)
+        if (grown <= 0.001) continue
+        // Bow is signed, so a line that changes sides passes through straight
+        // rather than snapping over. A line arriving or leaving keeps the one
+        // side it has.
+        const bow = grownBy(was?.bow ?? wants?.bow ?? 0, wants?.bow ?? was?.bow ?? 0, t)
+        next.set(name, { grown, bow })
       }
       growth.current = next
 
@@ -119,7 +139,7 @@ export function useAnimatedRune(figure: Figure, style: RuneStyle, size = 100): A
   const byId = new Map(target.layers.map((l) => [l.attribute.id, l.attribute]))
 
   const chords: AnimatedChord[] = []
-  for (const [name, grown] of growth.current) {
+  for (const [name, drawn] of growth.current) {
     const [attributeId, start] = name.split(':')
     const attribute = byId.get(attributeId)
     const from = Number(start)
@@ -129,13 +149,19 @@ export function useAnimatedRune(figure: Figure, style: RuneStyle, size = 100): A
       attributeId,
       from,
       to: (from + attribute.k) % sides,
-      grown,
+      grown: drawn.grown,
+      bow: drawn.bow,
     })
   }
 
   const scaffold = style.showScaffold
     ? scaffoldChords(sides, figure.attributes).map((c) =>
-        chordBetween(nodes, closed, c.from, c.to, style.curvature),
+        chordBetween(
+          nodes,
+          c.from,
+          c.to,
+          bowSignOf(target.nodes, closed, c.from, c.to) * style.curvature,
+        ),
       )
     : []
 
@@ -146,7 +172,6 @@ export function useAnimatedRune(figure: Figure, style: RuneStyle, size = 100): A
     nodeRadius: shown.current.viewBox.size / 110,
     scaffold,
     chords,
-    pathOf: (chord) =>
-      chordBetween(nodes, closed, chord.from, chord.to, style.curvature, chord.grown),
+    pathOf: (chord) => chordBetween(nodes, chord.from, chord.to, chord.bow, chord.grown),
   }
 }

@@ -91,14 +91,41 @@ function turn(angle: number): number {
  * `curvature` is the sagitta as a fraction of half the chord, and `centre` is
  * the point the bow should lean towards.
  */
+/**
+ * Which side of a chord a point lies on, as +1 or -1 against the chord's own
+ * normal.
+ *
+ * Worth having on its own: a bow decided afresh each frame of an animation can
+ * swap sides as the dots move past a degenerate arrangement, and the line
+ * flickers. Deciding the side once and carrying it as a sign keeps it steady.
+ */
+export function bowDirection(p: Point, q: Point, towards: Point): number {
+  const dx = q.x - p.x
+  const dy = q.y - p.y
+  const length = Math.hypot(dx, dy)
+  if (length < FLAT) return 1
+  const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 }
+  const dot = (-dy / length) * (towards.x - mid.x) + (dx / length) * (towards.y - mid.y)
+  return dot < 0 ? -1 : 1
+}
+
 export function chord(p: Point, q: Point, towards: Point, curvature: number): Chord {
+  return bowedChord(p, q, bowDirection(p, q, towards) * curvature)
+}
+
+/**
+ * A chord bowed by a signed amount: the sign picks the side, the size picks
+ * the depth. Passing the bow through zero swaps sides without a jump, which is
+ * how a line changes which way it curves while it is moving.
+ */
+export function bowedChord(p: Point, q: Point, bow: number): Chord {
   const move = `M ${p.x.toFixed(3)} ${p.y.toFixed(3)}`
   const dx = q.x - p.x
   const dy = q.y - p.y
   const length = Math.hypot(dx, dy)
   if (length < FLAT) return { d: move, box: boxOf([p]) }
 
-  const sagitta = (curvature * length) / 2
+  const sagitta = (Math.abs(bow) * length) / 2
   if (Math.abs(sagitta) < FLAT) {
     return { d: `${move} L ${q.x.toFixed(3)} ${q.y.toFixed(3)}`, box: boxOf([p, q]) }
   }
@@ -106,12 +133,9 @@ export function chord(p: Point, q: Point, towards: Point, curvature: number): Ch
   const radius = (length * length) / 4 / (2 * Math.abs(sagitta)) + Math.abs(sagitta) / 2
 
   const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 }
-  let nx = -dy / length
-  let ny = dx / length
-  if (nx * (towards.x - mid.x) + ny * (towards.y - mid.y) < 0) {
-    nx = -nx
-    ny = -ny
-  }
+  const side = bow < 0 ? -1 : 1
+  const nx = (-dy / length) * side
+  const ny = (dx / length) * side
   const apex = { x: mid.x + nx * sagitta, y: mid.y + ny * sagitta }
 
   // A bow deeper than the half-chord is the major arc of its circle, and the
