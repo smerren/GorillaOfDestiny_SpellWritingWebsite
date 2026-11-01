@@ -1,0 +1,2554 @@
+[
+ {
+  "name": "Acid Arrow",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "Acid",
+  "area": "None",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Acid Splash",
+  "level": 0,
+  "school": "Conjuration",
+  "damage": "Acid",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Aid",
+  "level": 2,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Alarm",
+  "level": 1,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Cube (20)",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Alter Self",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Animal Friendship",
+  "level": 1,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Animal Messenger",
+  "level": 2,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Animal Shapes",
+  "level": 8,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Animate Dead",
+  "level": 3,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Animate Objects",
+  "level": 5,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Antilife Shell",
+  "level": 5,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Sphere (10)",
+  "range": "Self"
+ },
+ {
+  "name": "Antimagic Field",
+  "level": 8,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Sphere (10)",
+  "range": "Self"
+ },
+ {
+  "name": "Antipathy Sympathy",
+  "level": 8,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "Cube (200)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Arcane Eye",
+  "level": 4,
+  "school": "Divination",
+  "damage": "None",
+  "area": "Sphere (30)",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Arcane Hand",
+  "level": 5,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Arcane Lock",
+  "level": 2,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Arcane Sword",
+  "level": 7,
+  "school": "Evocation",
+  "damage": "Force",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Arcanists Magic Aura",
+  "level": 2,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Astral Projection",
+  "level": 9,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Augury",
+  "level": 2,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Awaken",
+  "level": 5,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Bane",
+  "level": 1,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Banishment",
+  "level": 4,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Barkskin",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Beacon Of Hope",
+  "level": 3,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Bestow Curse",
+  "level": 3,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Black Tentacles",
+  "level": 4,
+  "school": "Conjuration",
+  "damage": "Bludgeoning",
+  "area": "Cube (20)",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Blade Barrier",
+  "level": 6,
+  "school": "Evocation",
+  "damage": "Slashing",
+  "area": "Line (100)",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Bless",
+  "level": 1,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Blight",
+  "level": 4,
+  "school": "Necromancy",
+  "damage": "Necrotic",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Blindness Deafness",
+  "level": 2,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Blink",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Blur",
+  "level": 2,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Branding Smite",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "Radiant",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Burning Hands",
+  "level": 1,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "Cone (15)",
+  "range": "Self"
+ },
+ {
+  "name": "Call Lightning",
+  "level": 3,
+  "school": "Conjuration",
+  "damage": "Lightning",
+  "area": "Sphere (5)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Calm Emotions",
+  "level": 2,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "Sphere (20)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Chain Lightning",
+  "level": 6,
+  "school": "Evocation",
+  "damage": "Lightning",
+  "area": "None",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Charm Person",
+  "level": 1,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Chill Touch",
+  "level": 0,
+  "school": "Necromancy",
+  "damage": "Necrotic",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Circle Of Death",
+  "level": 6,
+  "school": "Necromancy",
+  "damage": "Necrotic",
+  "area": "Sphere (60)",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Clairvoyance",
+  "level": 3,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "1 Mile"
+ },
+ {
+  "name": "Clone",
+  "level": 8,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Cloudkill",
+  "level": 5,
+  "school": "Conjuration",
+  "damage": "Poison",
+  "area": "Sphere (20)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Color Spray",
+  "level": 1,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "Cone (15)",
+  "range": "Self"
+ },
+ {
+  "name": "Command",
+  "level": 1,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Commune With Nature",
+  "level": 5,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Commune",
+  "level": 5,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Comprehend Languages",
+  "level": 1,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Compulsion",
+  "level": 4,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Cone Of Cold",
+  "level": 5,
+  "school": "Evocation",
+  "damage": "Cold",
+  "area": "Cone (60)",
+  "range": "Self"
+ },
+ {
+  "name": "Confusion",
+  "level": 4,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "Sphere (10)",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Conjure Animals",
+  "level": 3,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Conjure Celestial",
+  "level": 7,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Conjure Elemental",
+  "level": 5,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Cube (10)",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Conjure Fey",
+  "level": 6,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Conjure Minor Elementals",
+  "level": 4,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Conjure Woodland Beings",
+  "level": 4,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Contact Other Plane",
+  "level": 5,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Contagion",
+  "level": 5,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Contingency",
+  "level": 6,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Continual Flame",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Control Water",
+  "level": 4,
+  "school": "Transmutation",
+  "damage": "Bludgeoning",
+  "area": "Cube (100)",
+  "range": "300 Feet"
+ },
+ {
+  "name": "Control Weather",
+  "level": 8,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Counterspell",
+  "level": 3,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Create Food And Water",
+  "level": 3,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Create Or Destroy Water",
+  "level": 1,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "Cube (30)",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Create Undead",
+  "level": 6,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Creation",
+  "level": 5,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "Cube (5)",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Cure Wounds",
+  "level": 1,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Dancing Lights",
+  "level": 0,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Darkness",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "Sphere (15)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Darkvision",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Daylight",
+  "level": 3,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "Sphere (60)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Death Ward",
+  "level": 4,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Delayed Blast Fireball",
+  "level": 7,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "Sphere (20)",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Demiplane",
+  "level": 8,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Detect Evil And Good",
+  "level": 1,
+  "school": "Divination",
+  "damage": "None",
+  "area": "Sphere (30)",
+  "range": "Self"
+ },
+ {
+  "name": "Detect Magic",
+  "level": 1,
+  "school": "Divination",
+  "damage": "None",
+  "area": "Sphere (30)",
+  "range": "Self"
+ },
+ {
+  "name": "Detect Poison And Disease",
+  "level": 1,
+  "school": "Divination",
+  "damage": "None",
+  "area": "Sphere (30)",
+  "range": "Self"
+ },
+ {
+  "name": "Detect Thoughts",
+  "level": 2,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Dimension Door",
+  "level": 4,
+  "school": "Conjuration",
+  "damage": "Force",
+  "area": "None",
+  "range": "500 Feet"
+ },
+ {
+  "name": "Disguise Self",
+  "level": 1,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Disintegrate",
+  "level": 6,
+  "school": "Transmutation",
+  "damage": "Force",
+  "area": "Cube (10)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Dispel Evil And Good",
+  "level": 5,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Dispel Magic",
+  "level": 3,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Divination",
+  "level": 4,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Divine Favor",
+  "level": 1,
+  "school": "Evocation",
+  "damage": "Radiant",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Divine Word",
+  "level": 7,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Dominate Beast",
+  "level": 4,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Dominate Monster",
+  "level": 8,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Dominate Person",
+  "level": 5,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Dream",
+  "level": 5,
+  "school": "Illusion",
+  "damage": "Psychic",
+  "area": "None",
+  "range": "Special"
+ },
+ {
+  "name": "Druidcraft",
+  "level": 0,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Earthquake",
+  "level": 8,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "Sphere (100)",
+  "range": "500 Feet"
+ },
+ {
+  "name": "Eldritch Blast",
+  "level": 0,
+  "school": "Evocation",
+  "damage": "Force",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Enhance Ability",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Enlarge Reduce",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Entangle",
+  "level": 1,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Cube (20)",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Enthrall",
+  "level": 2,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Etherealness",
+  "level": 7,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Expeditious Retreat",
+  "level": 1,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Eyebite",
+  "level": 6,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Fabricate",
+  "level": 4,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Faerie Fire",
+  "level": 1,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "Cube (20)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Faithful Hound",
+  "level": 4,
+  "school": "Conjuration",
+  "damage": "Piercing",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "False Life",
+  "level": 1,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Fear",
+  "level": 3,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "Cone (30)",
+  "range": "Self"
+ },
+ {
+  "name": "Feather Fall",
+  "level": 1,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Feeblemind",
+  "level": 8,
+  "school": "Enchantment",
+  "damage": "Psychic",
+  "area": "None",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Find Familiar",
+  "level": 1,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Find Steed",
+  "level": 2,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Find The Path",
+  "level": 6,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Find Traps",
+  "level": 2,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Finger Of Death",
+  "level": 7,
+  "school": "Necromancy",
+  "damage": "Necrotic",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Fire Bolt",
+  "level": 0,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Fire Shield",
+  "level": 4,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "Sphere (5)",
+  "range": "Self"
+ },
+ {
+  "name": "Fire Storm",
+  "level": 7,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "Cube (100)",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Fireball",
+  "level": 3,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "Sphere (20)",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Flame Blade",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Flame Strike",
+  "level": 5,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "Cylinder (40)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Flaming Sphere",
+  "level": 2,
+  "school": "Conjuration",
+  "damage": "Fire",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Flesh To Stone",
+  "level": 6,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Floating Disk",
+  "level": 1,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Fly",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Fog Cloud",
+  "level": 1,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Sphere (20)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Forbiddance",
+  "level": 6,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Cube (40000)",
+  "range": "Touch"
+ },
+ {
+  "name": "Forcecage",
+  "level": 7,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "Cube (20)",
+  "range": "100 Feet"
+ },
+ {
+  "name": "Foresight",
+  "level": 9,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Freedom Of Movement",
+  "level": 4,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Freezing Sphere",
+  "level": 6,
+  "school": "Evocation",
+  "damage": "Cold",
+  "area": "Sphere (60)",
+  "range": "300 Feet"
+ },
+ {
+  "name": "Gaseous Form",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Gate",
+  "level": 9,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Geas",
+  "level": 5,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Gentle Repose",
+  "level": 2,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Giant Insect",
+  "level": 4,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Glibness",
+  "level": 8,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Globe Of Invulnerability",
+  "level": 6,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Sphere (10)",
+  "range": "Self"
+ },
+ {
+  "name": "Glyph Of Warding",
+  "level": 3,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Goodberry",
+  "level": 1,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Grease",
+  "level": 1,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Cube (10)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Greater Invisibility",
+  "level": 4,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Greater Restoration",
+  "level": 5,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Guardian Of Faith",
+  "level": 4,
+  "school": "Conjuration",
+  "damage": "Radiant",
+  "area": "Cylinder (10)",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Guards And Wards",
+  "level": 6,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Cube (2500)",
+  "range": "Touch"
+ },
+ {
+  "name": "Guidance",
+  "level": 0,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Guiding Bolt",
+  "level": 1,
+  "school": "Evocation",
+  "damage": "Radiant",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Gust Of Wind",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "Line (60)",
+  "range": "Self"
+ },
+ {
+  "name": "Hallow",
+  "level": 5,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "Sphere (60)",
+  "range": "Touch"
+ },
+ {
+  "name": "Hallucinatory Terrain",
+  "level": 4,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "Cube (150)",
+  "range": "300 Feet"
+ },
+ {
+  "name": "Harm",
+  "level": 6,
+  "school": "Necromancy",
+  "damage": "Necrotic",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Haste",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Heal",
+  "level": 6,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Healing Word",
+  "level": 1,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Heat Metal",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "Fire",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Hellish Rebuke",
+  "level": 1,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Heroes Feast",
+  "level": 6,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Heroism",
+  "level": 1,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Hideous Laughter",
+  "level": 1,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Hold Monster",
+  "level": 5,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Hold Person",
+  "level": 2,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Holy Aura",
+  "level": 8,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Sphere (30)",
+  "range": "Self"
+ },
+ {
+  "name": "Hunters Mark",
+  "level": 1,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Hypnotic Pattern",
+  "level": 3,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Ice Storm",
+  "level": 4,
+  "school": "Evocation",
+  "damage": "Bludgeoning",
+  "area": "Cylinder (20)",
+  "range": "300 Feet"
+ },
+ {
+  "name": "Identify",
+  "level": 1,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Illusory Script",
+  "level": 1,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Imprisonment",
+  "level": 9,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Incendiary Cloud",
+  "level": 8,
+  "school": "Conjuration",
+  "damage": "Fire",
+  "area": "Sphere (20)",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Inflict Wounds",
+  "level": 1,
+  "school": "Necromancy",
+  "damage": "Necrotic",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Insect Plague",
+  "level": 5,
+  "school": "Conjuration",
+  "damage": "Piercing",
+  "area": "Sphere (20)",
+  "range": "300 Feet"
+ },
+ {
+  "name": "Instant Summons",
+  "level": 6,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Invisibility",
+  "level": 2,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Irresistible Dance",
+  "level": 6,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Jump",
+  "level": 1,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Knock",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Legend Lore",
+  "level": 5,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Lesser Restoration",
+  "level": 2,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Levitate",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Light",
+  "level": 0,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Lightning Bolt",
+  "level": 3,
+  "school": "Evocation",
+  "damage": "Lightning",
+  "area": "Line (100)",
+  "range": "Self"
+ },
+ {
+  "name": "Locate Animals Or Plants",
+  "level": 2,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Locate Creature",
+  "level": 4,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Locate Object",
+  "level": 2,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Longstrider",
+  "level": 1,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Mage Armor",
+  "level": 1,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Mage Hand",
+  "level": 0,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Magic Circle",
+  "level": 3,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Cylinder (10)",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Magic Jar",
+  "level": 6,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Magic Missile",
+  "level": 1,
+  "school": "Evocation",
+  "damage": "Force",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Magic Mouth",
+  "level": 2,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Magic Weapon",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Magnificent Mansion",
+  "level": 7,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Cube (5)",
+  "range": "300 Feet"
+ },
+ {
+  "name": "Major Image",
+  "level": 3,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Mass Cure Wounds",
+  "level": 5,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Sphere (30)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Mass Heal",
+  "level": 9,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Mass Healing Word",
+  "level": 3,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Mass Suggestion",
+  "level": 6,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Maze",
+  "level": 8,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Meld Into Stone",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Mending",
+  "level": 0,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Message",
+  "level": 0,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Meteor Swarm",
+  "level": 9,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "Sphere (40)",
+  "range": "1 Mile"
+ },
+ {
+  "name": "Mind Blank",
+  "level": 8,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Minor Illusion",
+  "level": 0,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Mirage Arcane",
+  "level": 7,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "Cube (5280)",
+  "range": "Sight"
+ },
+ {
+  "name": "Mirror Image",
+  "level": 2,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Mislead",
+  "level": 5,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Misty Step",
+  "level": 2,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Modify Memory",
+  "level": 5,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Moonbeam",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "Radiant",
+  "area": "Cylinder (5)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Move Earth",
+  "level": 6,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "Cone (40)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Nondetection",
+  "level": 3,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Pass Without Trace",
+  "level": 2,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Passwall",
+  "level": 5,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Phantasmal Killer",
+  "level": 4,
+  "school": "Illusion",
+  "damage": "Psychic",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Phantom Steed",
+  "level": 3,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Planar Ally",
+  "level": 6,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Planar Binding",
+  "level": 5,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Plane Shift",
+  "level": 7,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Plant Growth",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Poison Spray",
+  "level": 0,
+  "school": "Conjuration",
+  "damage": "Poison",
+  "area": "None",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Polymorph",
+  "level": 4,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Power Word Kill",
+  "level": 9,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Power Word Stun",
+  "level": 8,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Prayer Of Healing",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Prestidigitation",
+  "level": 0,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Prismatic Spray",
+  "level": 7,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "Cone (60)",
+  "range": "Self"
+ },
+ {
+  "name": "Prismatic Wall",
+  "level": 9,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Line (90)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Private Sanctum",
+  "level": 4,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Cube (100)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Produce Flame",
+  "level": 0,
+  "school": "Conjuration",
+  "damage": "Fire",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Programmed Illusion",
+  "level": 6,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "Cube (30)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Project Image",
+  "level": 7,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "500 Miles"
+ },
+ {
+  "name": "Protection From Energy",
+  "level": 3,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Protection From Evil And Good",
+  "level": 1,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Protection From Poison",
+  "level": 2,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Purify Food And Drink",
+  "level": 1,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Raise Dead",
+  "level": 5,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Ray Of Enfeeblement",
+  "level": 2,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Ray Of Frost",
+  "level": 0,
+  "school": "Evocation",
+  "damage": "Cold",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Regenerate",
+  "level": 7,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Reincarnate",
+  "level": 5,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Remove Curse",
+  "level": 3,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Resilient Sphere",
+  "level": 4,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Resistance",
+  "level": 0,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Resurrection",
+  "level": 7,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Reverse Gravity",
+  "level": 7,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "Cylinder (50)",
+  "range": "100 Feet"
+ },
+ {
+  "name": "Revivify",
+  "level": 3,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Rope Trick",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Sacred Flame",
+  "level": 0,
+  "school": "Evocation",
+  "damage": "Radiant",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Sanctuary",
+  "level": 1,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Scorching Ray",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Scrying",
+  "level": 5,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Secret Chest",
+  "level": 4,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "See Invisibility",
+  "level": 2,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Seeming",
+  "level": 5,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Sending",
+  "level": 3,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "Unlimited"
+ },
+ {
+  "name": "Sequester",
+  "level": 7,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Shapechange",
+  "level": 9,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Shatter",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "Thunder",
+  "area": "Sphere (10)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Shield Of Faith",
+  "level": 1,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Shield",
+  "level": 1,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Shillelagh",
+  "level": 0,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Shocking Grasp",
+  "level": 0,
+  "school": "Evocation",
+  "damage": "Lightning",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Silence",
+  "level": 2,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "Sphere (20)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Silent Image",
+  "level": 1,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "Cube (15)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Simulacrum",
+  "level": 7,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Sleep",
+  "level": 1,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "Sphere (20)",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Sleet Storm",
+  "level": 3,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Cylinder (40)",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Slow",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "Cube (40)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Spare The Dying",
+  "level": 0,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Speak With Animals",
+  "level": 1,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Speak With Dead",
+  "level": 3,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Speak With Plants",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "Sphere (30)",
+  "range": "Self"
+ },
+ {
+  "name": "Spider Climb",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Spike Growth",
+  "level": 2,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "Cylinder (20)",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Spirit Guardians",
+  "level": 3,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Spiritual Weapon",
+  "level": 2,
+  "school": "Evocation",
+  "damage": "Force",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Stinking Cloud",
+  "level": 3,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Sphere (20)",
+  "range": "90 Feet"
+ },
+ {
+  "name": "Stone Shape",
+  "level": 4,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Stoneskin",
+  "level": 4,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Storm Of Vengeance",
+  "level": 9,
+  "school": "Conjuration",
+  "damage": "Thunder",
+  "area": "Sphere (360)",
+  "range": "Sight"
+ },
+ {
+  "name": "Suggestion",
+  "level": 2,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Sunbeam",
+  "level": 6,
+  "school": "Evocation",
+  "damage": "Radiant",
+  "area": "Line (60)",
+  "range": "Self"
+ },
+ {
+  "name": "Sunburst",
+  "level": 8,
+  "school": "Evocation",
+  "damage": "Radiant",
+  "area": "Cylinder (60)",
+  "range": "150 Feet"
+ },
+ {
+  "name": "Symbol",
+  "level": 7,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "Cube (10)",
+  "range": "Touch"
+ },
+ {
+  "name": "Telekinesis",
+  "level": 5,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "Sphere (30)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Telepathic Bond",
+  "level": 5,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Teleport",
+  "level": 7,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Cube (10)",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Teleportation Circle",
+  "level": 5,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Sphere (10)",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Thaumaturgy",
+  "level": 0,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Thunderwave",
+  "level": 1,
+  "school": "Evocation",
+  "damage": "Thunder",
+  "area": "Cube (15)",
+  "range": "Self"
+ },
+ {
+  "name": "Time Stop",
+  "level": 9,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Tiny Hut",
+  "level": 3,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "Sphere (10)",
+  "range": "Self"
+ },
+ {
+  "name": "Tongues",
+  "level": 3,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Transport Via Plants",
+  "level": 6,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "10 Feet"
+ },
+ {
+  "name": "Tree Stride",
+  "level": 5,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "True Polymorph",
+  "level": 9,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "True Resurrection",
+  "level": 9,
+  "school": "Necromancy",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "True Seeing",
+  "level": 6,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "True Strike",
+  "level": 0,
+  "school": "Divination",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Unseen Servant",
+  "level": 1,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Vampiric Touch",
+  "level": 3,
+  "school": "Necromancy",
+  "damage": "Necrotic",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Vicious Mockery",
+  "level": 0,
+  "school": "Enchantment",
+  "damage": "Psychic",
+  "area": "None",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Wall Of Fire",
+  "level": 4,
+  "school": "Evocation",
+  "damage": "Fire",
+  "area": "Line (60)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Wall Of Force",
+  "level": 5,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Wall Of Ice",
+  "level": 6,
+  "school": "Evocation",
+  "damage": "Cold",
+  "area": "Sphere (10)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Wall Of Stone",
+  "level": 5,
+  "school": "Evocation",
+  "damage": "None",
+  "area": "None",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Wall Of Thorns",
+  "level": 6,
+  "school": "Conjuration",
+  "damage": "Piercing",
+  "area": "Line (60)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Warding Bond",
+  "level": 2,
+  "school": "Abjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Touch"
+ },
+ {
+  "name": "Water Breathing",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Water Walk",
+  "level": 3,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Web",
+  "level": 2,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Cube (20)",
+  "range": "60 Feet"
+ },
+ {
+  "name": "Weird",
+  "level": 9,
+  "school": "Illusion",
+  "damage": "None",
+  "area": "Sphere (30)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Wind Walk",
+  "level": 6,
+  "school": "Transmutation",
+  "damage": "None",
+  "area": "None",
+  "range": "30 Feet"
+ },
+ {
+  "name": "Wind Wall",
+  "level": 3,
+  "school": "Evocation",
+  "damage": "Bludgeoning",
+  "area": "Line (50)",
+  "range": "120 Feet"
+ },
+ {
+  "name": "Wish",
+  "level": 9,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "None",
+  "range": "Self"
+ },
+ {
+  "name": "Word Of Recall",
+  "level": 6,
+  "school": "Conjuration",
+  "damage": "None",
+  "area": "Sphere (5)",
+  "range": "5 Feet"
+ },
+ {
+  "name": "Zone Of Truth",
+  "level": 2,
+  "school": "Enchantment",
+  "damage": "None",
+  "area": "Sphere (15)",
+  "range": "60 Feet"
+ }
+]

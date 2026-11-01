@@ -1,0 +1,481 @@
+/*
+ * The dictionaries are printed as oxblood ink and gold rules on aged paper.
+ * Colours here are sampled from those plates, so a rune exported from this page
+ * sits beside one from the book without jarring.
+ */
+
+:root {
+  --parchment: #ece0c4;
+  --ink: #8b0000;
+  --gold: #a98b46;
+  --gold-soft: #c9ad6a;
+  --text: #3a2d1c;
+  --text-soft: #6b5a42;
+  --rule: rgba(90, 70, 40, 0.28);
+  --shadow: rgba(60, 44, 22, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--parchment);
+  /* Blotches, so the ground reads as paper rather than a flat fill. */
+  background-image:
+    radial-gradient(ellipse 60% 40% at 15% 12%, rgba(176, 148, 96, 0.22), transparent 70%),
+    radial-gradient(ellipse 45% 35% at 85% 25%, rgba(150, 118, 70, 0.16), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 70% 85%, rgba(176, 148, 96, 0.2), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 25% 75%, rgba(140, 110, 64, 0.14), transparent 70%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: "EB Garamond", Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2 {
+  font-family: Cinzel, Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+a {
+  color: #6d4b1f;
+}
+
+code {
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 0.78em;
+  letter-spacing: 0.08em;
+}
+
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  text-align: center;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+}
+
+.masthead::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 120px;
+  height: 7px;
+  transform: translateX(-50%);
+  border-top: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold);
+}
+
+.masthead h1 {
+  font-size: clamp(2rem, 6vw, 3.1rem);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #4a2a18;
+}
+
+.standfirst {
+  max-width: 60ch;
+  margin: 0.9rem auto 0;
+  color: var(--text-soft);
+  font-size: 1.03rem;
+}
+
+/* ---------- layout ---------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24rem;
+  gap: 2rem;
+  align-items: start;
+}
+
+.stage {
+  position: sticky;
+  top: 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stage {
+    position: static;
+  }
+}
+
+/* ---------- the plate ---------- */
+
+.plate {
+  margin: 0;
+  padding: 1.5rem;
+  background: linear-gradient(170deg, #f3e9d2, #e4d4ae);
+  border: 1px solid var(--rule);
+  box-shadow:
+    0 1px 0 rgba(255, 252, 240, 0.7) inset,
+    0 10px 28px -16px var(--shadow);
+  position: relative;
+}
+
+.plate::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid var(--gold-soft);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.rune {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 58vh;
+}
+
+.plate figcaption {
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.title-input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  background: transparent;
+  text-align: center;
+  font-family: Cinzel, Georgia, serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4a2a18;
+  padding: 0.3rem 0;
+}
+
+.title-input::placeholder {
+  color: rgba(106, 86, 56, 0.45);
+}
+
+.title-input:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+}
+
+/* ---------- readout ---------- */
+
+.readout {
+  padding: 1.1rem 1.25rem 1.25rem;
+  background: rgba(247, 240, 223, 0.6);
+  border: 1px solid var(--rule);
+}
+
+.readout h2,
+.panel h2 {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+}
+
+.readout h2 {
+  margin-bottom: 0.6rem;
+}
+
+.readout table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.readout tr {
+  border-bottom: 1px solid rgba(90, 70, 40, 0.14);
+}
+
+.readout tr:hover {
+  background: rgba(201, 173, 106, 0.16);
+}
+
+.readout th,
+.readout td {
+  text-align: left;
+  padding: 0.38rem 0.5rem 0.38rem 0;
+  font-weight: 400;
+  vertical-align: baseline;
+}
+
+.readout th {
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  width: 8.5rem;
+}
+
+.readout .feature {
+  font-style: italic;
+}
+
+.readout .count {
+  text-align: right;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+button {
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.85rem;
+  color: #4a2a18;
+  background: linear-gradient(180deg, #f1e6cd, #e0cfa8);
+  border: 1px solid var(--rule);
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    transform 120ms ease;
+}
+
+button:hover {
+  background: linear-gradient(180deg, #f7eedb, #e7d8b6);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* ---------- control panels ---------- */
+
+.controls {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.panel {
+  padding: 1.15rem 1.25rem 1.35rem;
+  background: rgba(247, 240, 223, 0.55);
+  border: 1px solid var(--rule);
+}
+
+.panel h2 {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 0.75rem;
+}
+
+.hint {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  color: var(--text-soft);
+}
+
+.attributes {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.attribute {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.attribute-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  flex: none;
+}
+
+.attribute-label {
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+.k {
+  margin-left: auto;
+  font-size: 0.76rem;
+  font-style: italic;
+  color: var(--text-soft);
+}
+
+.bits {
+  color: var(--text-soft);
+  font-size: 0.72rem;
+}
+
+select,
+input[type="search"] {
+  width: 100%;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 0.95rem;
+  padding: 0.38rem 0.5rem;
+  color: var(--text);
+  background: rgba(255, 252, 243, 0.75);
+  border: 1px solid var(--rule);
+}
+
+select:focus,
+input:focus {
+  outline: 2px solid var(--gold-soft);
+  outline-offset: -1px;
+}
+
+.field {
+  display: grid;
+  gap: 0.3rem;
+  margin-bottom: 0.9rem;
+}
+
+.field > span {
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.82rem;
+}
+
+.field small {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+}
+
+.inline {
+  color: var(--text-soft);
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #8b0000;
+}
+
+.toggles {
+  border: 1px solid var(--rule);
+  padding: 0.6rem 0.8rem 0.8rem;
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.toggles legend {
+  font-family: Cinzel, Georgia, serif;
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 0 0.4rem;
+}
+
+.toggles label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+input[type="checkbox"] {
+  accent-color: #8b0000;
+}
+
+/* ---------- spellbook ---------- */
+
+.search {
+  margin-bottom: 0.75rem;
+}
+
+.spell-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 22rem;
+  overflow-y: auto;
+  border-top: 1px solid var(--rule);
+}
+
+.spell {
+  display: block;
+  width: 100%;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: 0.95rem;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(90, 70, 40, 0.12);
+  padding: 0.4rem 0.3rem;
+}
+
+.spell:hover {
+  background: rgba(201, 173, 106, 0.2);
+}
+
+.spell.current {
+  background: rgba(139, 0, 0, 0.1);
+  box-shadow: inset 3px 0 0 var(--ink);
+}
+
+.spell-name {
+  display: block;
+}
+
+.spell-meta {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+.empty {
+  padding: 0.75rem 0.3rem;
+  color: var(--text-soft);
+  font-style: italic;
+}
+
+/* ---------- colophon ---------- */
+
+.colophon {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.84rem;
+  color: var(--text-soft);
+  max-width: 70ch;
+}
+
+.colophon p {
+  margin: 0 0 0.5rem;
+}

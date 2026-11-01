@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# Source material. The guide and its dictionaries are the Gorilla of Destiny's
+# work and are large (the v2 dictionary alone is 54MB), so they are kept out of
+# the repository. Everything the project needs has been extracted into
+# src/data/spells.json and test/drawn-runes.json. See the README for provenance.
+*.pdf
