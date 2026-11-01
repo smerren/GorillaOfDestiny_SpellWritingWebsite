@@ -253,12 +253,25 @@ Pushing to `main` builds the site and publishes it to GitHub Pages, by way of
 tests first, so a broken encoding cannot reach the published page.
 
 Turn it on once, under **Settings → Pages → Build and deployment → Source: GitHub
-Actions**. The site then lands at `https://<user>.github.io/<repo>/`.
+Actions**. The site then lands at `https://smerren.github.io/spell-writing/`.
+
+**The path is the repository name.** GitHub serves a project site at
+`https://<user>.github.io/<repo>/` and offers no setting to change it, so the repository
+has to be called `spell-writing` for the URL to read that way. Renaming it later is one
+field in **Settings → General**, and GitHub redirects the old URL afterwards; the only
+other thing to do is point your local copy at the new name:
+
+```
+git remote set-url origin https://github.com/smerren/spell-writing.git
+```
+
+Nothing in the project refers to the repository by name, so a rename needs no code
+change. Asset paths are relative (`base: './'` in `vite.config.ts`), so the site works at
+whatever path it is served from — including the root, if you ever put it behind a domain
+of your own.
 
 Pages serves the built artifact directly, so Jekyll never runs over it and no `.nojekyll`
-file is needed — even if your user page is itself a Jekyll site. Asset paths are relative
-(`base: './'` in `vite.config.ts`), so the site works under `/<repo>/` without any further
-configuration.
+file is needed, even though your user page is itself a Jekyll site.
 
 ## Credits and licensing
 
